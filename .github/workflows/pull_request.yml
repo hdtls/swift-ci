@@ -1,0 +1,16 @@
+name: Pull Request Validation (CI)
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  soundness:
+    name: Soundness
+    uses: hdtls/swift-ci/.github/workflows/soundness.yml@main
+
+  unit-tests:
+    name: Unit tests
+    uses: hdtls/swift-ci/.github/workflows/unit_tests.yml@main
+    secrets:
+      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

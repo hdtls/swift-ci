@@ -1,0 +1,12 @@
+name: Main
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    uses: hdtls/swift-ci/.github/workflows/unit_tests.yml@main
+    secrets:
+      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
