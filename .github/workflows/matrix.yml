@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   execute-matrix:
-    name: ${{ matrix.config.platform }} (${{ matrix.config.name }})
+    name: ${{ matrix.config.platform }} (${{ matrix.config.swift_version }} - ${{ matrix.config.os_version }})
     runs-on: ${{ matrix.config.runner }}
     strategy:
       fail-fast: false
@@ -54,7 +54,7 @@ jobs:
             -e SWIFT_VERSION="${{ matrix.config.swift_version }}" \
             -e setup_command_expression="$setup_command_expression" \
             -e workspace="$workspace" \
-            ${{ matrix.config.image }} \
+            ${{ (contains(matrix.config.swift_version, 'nightly') && 'swiftlang/swift') || 'swift' }}:${{ matrix.config.swift_version }}-${{ matrix.config.os_version }} \
             bash -c "$setup_command_expression ${{ matrix.config.command }} ${{ matrix.config.command_arguments }}"
       - name: Run matrix job (Windows)
         if: ${{ matrix.config.platform == 'Windows' }}
@@ -67,6 +67,11 @@ jobs:
           if (-not [string]::IsNullOrEmpty("${{ secrets.PERSONAL_ACCESS_TOKEN }}")) {
             setup_command_expression="$setup_command_expression git config --global --add url.https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/.insteadOf https://github.com/ &"
           }
+          if ("${{ matrix.config.swift_version }}".Contains("nightly")) {
+            $Image = "swiftlang/swift:${{ matrix.config.swift_version }}-windowsservercore-1809"
+          } else {
+            $Image = "swift:${{ matrix.config.swift_version }}-windowsservercore-ltsc2022"
+          }
           $workspace = "C:\" + (Split-Path ${{ github.workspace }} -Leaf)
           docker run -v ${{ github.workspace }}:$($workspace) `
             -w $($workspace) `
@@ -74,5 +79,5 @@ jobs:
             -e GITHUB_ACTIONS=%GITHUB_ACTIONS% `
             -e SWIFT_VERSION="${{ matrix.config.swift_version }}" `
             -e setup_command_expression=%setup_command_expression% `
-            ${{ matrix.config.image }} `
+            $Image `
             cmd /s /c  "swift --version & powershell Invoke-Expression ""$($setup_command_expression) ${{ matrix.config.command }} ${{ matrix.config.command_arguments }}"""

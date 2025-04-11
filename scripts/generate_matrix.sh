@@ -56,19 +56,8 @@ windows_nightly_main_command_arguments="$MATRIX_WINDOWS_NIGHTLY_MAIN_COMMAND_ARG
 
 # Defaults
 linux_runner="ubuntu-latest"
-linux_5_9_container_image="swift:5.9-jammy"
-linux_5_10_container_image="swift:5.10-jammy"
-linux_6_0_container_image="swift:6.0-jammy"
-linux_6_1_container_image="swift:6.1-jammy"
-linux_nightly_release_container_image="swiftlang/swift:nightly-6.1-jammy"
-linux_nightly_main_container_image="swiftlang/swift:nightly-main-jammy"
-
 windows_runner="windows-2022"
-windows_6_0_container_image="swift:6.0-windowsservercore-ltsc2022"
-windows_6_1_container_image="swift:6.1-windowsservercore-ltsc2022"
 windows_nightly_runner="windows-2019"
-windows_nightly_release_container_image="swiftlang/swift:nightly-6.1-windowsservercore-1809"
-windows_nightly_main_container_image="swiftlang/swift:nightly-main-windowsservercore-1809"
 
 # Create matrix from inputs
 matrix='{"config": []}'
@@ -86,9 +75,8 @@ if [[ "$linux_5_9_enabled" == "true" ]]; then
     --arg setup_command "$linux_setup_command"  \
     --arg command "$linux_command"  \
     --arg command_arguments "$linux_5_9_command_arguments" \
-    --arg container_image "$linux_5_9_container_image" \
     --arg runner "$linux_runner" \
-    '.config[.config| length] |= . + { "name": "5.9", "image": $container_image, "swift_version": "5.9", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
+    '.config[.config| length] |= . + { "os_version": "jammy", "swift_version": "5.9", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
 fi
 
 if [[ "$linux_5_10_enabled" == "true" ]]; then
@@ -96,9 +84,8 @@ if [[ "$linux_5_10_enabled" == "true" ]]; then
     --arg setup_command "$linux_setup_command"  \
     --arg command "$linux_command"  \
     --arg command_arguments "$linux_5_10_command_arguments" \
-    --arg container_image "$linux_5_10_container_image" \
     --arg runner "$linux_runner" \
-    '.config[.config| length] |= . + { "name": "5.10", "image": $container_image, "swift_version": "5.10", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
+    '.config[.config| length] |= . + { "os_version": "jammy", "swift_version": "5.10", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
 fi
 
 if [[ "$linux_6_0_enabled" == "true" ]]; then
@@ -106,9 +93,8 @@ if [[ "$linux_6_0_enabled" == "true" ]]; then
     --arg setup_command "$linux_setup_command"  \
     --arg command "$linux_command"  \
     --arg command_arguments "$linux_6_0_command_arguments" \
-    --arg container_image "$linux_6_0_container_image" \
     --arg runner "$linux_runner" \
-    '.config[.config| length] |= . + { "name": "6.0", "image": $container_image, "swift_version": "6.0", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
+    '.config[.config| length] |= . + { "os_version": "jammy", "swift_version": "6.0", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
 fi
 
 if [[ "$linux_6_1_enabled" == "true" ]]; then
@@ -116,9 +102,8 @@ if [[ "$linux_6_1_enabled" == "true" ]]; then
     --arg setup_command "$linux_setup_command"  \
     --arg command "$linux_command"  \
     --arg command_arguments "$linux_6_1_command_arguments" \
-    --arg container_image "$linux_6_1_container_image" \
     --arg runner "$linux_runner" \
-    '.config[.config| length] |= . + { "name": "6.1", "image": $container_image, "swift_version": "6.1", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
+    '.config[.config| length] |= . + { "os_version": "jammy", "swift_version": "6.1", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
 fi
 
 if [[ "$linux_nightly_release_enabled" == "true" ]]; then
@@ -126,9 +111,8 @@ if [[ "$linux_nightly_release_enabled" == "true" ]]; then
     --arg setup_command "$linux_setup_command"  \
     --arg command "$linux_command"  \
     --arg command_arguments "$linux_nightly_release_command_arguments" \
-    --arg container_image "$linux_nightly_release_container_image" \
     --arg runner "$linux_runner" \
-    '.config[.config| length] |= . + { "name": "release/6.1", "image": $container_image, "swift_version": "release/6.1", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
+    '.config[.config| length] |= . + { "os_version": "jammy", "swift_version": "nightly-6.1", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
 fi
 
 if [[ "$linux_nightly_main_enabled" == "true" ]]; then
@@ -136,9 +120,8 @@ if [[ "$linux_nightly_main_enabled" == "true" ]]; then
     --arg setup_command "$linux_setup_command"  \
     --arg command "$linux_command"  \
     --arg command_arguments "$linux_nightly_main_command_arguments" \
-    --arg container_image "$linux_nightly_main_container_image" \
     --arg runner "$linux_runner" \
-    '.config[.config| length] |= . + { "name": "main", "image": $container_image, "swift_version": "main", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
+    '.config[.config| length] |= . + { "os_version": "jammy", "swift_version": "nightly-main", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
 fi
 
 ## Windows
@@ -153,9 +136,8 @@ if [[ "$windows_6_0_enabled" == "true" ]]; then
     --arg setup_command "$windows_setup_command"  \
     --arg command "$windows_command"  \
     --arg command_arguments "$windows_6_0_command_arguments" \
-    --arg container_image "$windows_6_0_container_image" \
     --arg runner "$windows_runner" \
-    '.config[.config| length] |= . + { "name": "6.0", "image": $container_image, "swift_version": "6.0", "platform": "Windows", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner }')
+    '.config[.config| length] |= . + { "os_version": "windows-2022", "swift_version": "6.0", "platform": "Windows", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner }')
 fi
 
 if [[ "$windows_6_1_enabled" == "true" ]]; then
@@ -163,9 +145,8 @@ if [[ "$windows_6_1_enabled" == "true" ]]; then
     --arg setup_command "$windows_setup_command"  \
     --arg command "$windows_command"  \
     --arg command_arguments "$windows_6_1_command_arguments" \
-    --arg container_image "$windows_6_1_container_image" \
     --arg runner "$windows_runner" \
-    '.config[.config| length] |= . + { "name": "6.1", "image": $container_image, "swift_version": "6.1", "platform": "Windows", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner }')
+    '.config[.config| length] |= . + { "os_version": "windows-2022", "swift_version": "6.1", "platform": "Windows", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner }')
 fi
 
 if [[ "$windows_nightly_release_enabled" == "true" ]]; then
@@ -173,9 +154,8 @@ if [[ "$windows_nightly_release_enabled" == "true" ]]; then
     --arg setup_command "$windows_setup_command"  \
     --arg command "$windows_command"  \
     --arg command_arguments "$windows_nightly_release_command_arguments" \
-    --arg container_image "$windows_nightly_release_container_image" \
     --arg runner "$windows_nightly_runner" \
-    '.config[.config| length] |= . + { "name": "release/6.1", "image": $container_image, "swift_version": "release/6.1", "platform": "Windows", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner }')
+    '.config[.config| length] |= . + { "os_version": "windows-2019", "swift_version": "nightly-6.1", "platform": "Windows", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner }')
 fi
 
 if [[ "$windows_nightly_main_enabled" == "true" ]]; then
@@ -183,9 +163,8 @@ if [[ "$windows_nightly_main_enabled" == "true" ]]; then
     --arg setup_command "$windows_setup_command"  \
     --arg command "$windows_command"  \
     --arg command_arguments "$windows_nightly_main_command_arguments" \
-    --arg container_image "$windows_nightly_main_container_image" \
     --arg runner "$windows_nightly_runner" \
-    '.config[.config| length] |= . + { "name": "main", "image": $container_image, "swift_version": "main", "platform": "Windows", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner }')
+    '.config[.config| length] |= . + { "os_version": "windows-2019", "swift_version": "nightly-main", "platform": "Windows", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner }')
 fi
 
 echo "$matrix" | jq -c
