@@ -8,6 +8,8 @@ jobs:
   soundness:
     name: Soundness
     uses: hdtls/swift-ci/.github/workflows/soundness.yml@main
+    secrets:
+      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
   unit-tests:
     name: Unit tests
