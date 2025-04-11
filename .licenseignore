@@ -1,0 +1,4 @@
+**/*.yml
+LICENSE.txt
+README.md
+Package.swift
