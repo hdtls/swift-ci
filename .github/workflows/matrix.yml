@@ -62,25 +62,26 @@ jobs:
             -e SWIFT_CI_COMMAND_EXPRESSION="$SWIFT_CI_COMMAND_EXPRESSION" \
             -e SWIFT_CI_WORKSPACE="$SWIFT_CI_WORKSPACE" \
             "$SWIFT_CI_RUNNER_IMAGE" \
-            bash -c "$SWIFT_CI_COMMAND_EXPRESSION"
+            bash -c "swift --version && $SWIFT_CI_COMMAND_EXPRESSION"
 
-      - name: Run matrix job (Windows)
+      - name: Run matrix job (Windows windowsservercore)
         timeout-minutes: 60
         if: ${{ matrix.definitions.platform == 'Windows' }}
+        shell: pwsh
         run: |
           $SWIFT_CI_COMMAND_EXPRESSION = ""
 
           if (-not [string]::IsNullOrEmpty("${{ secrets.PERSONAL_ACCESS_TOKEN }}")) {
-            $SWIFT_CI_COMMAND_EXPRESSION += " git config --global --add url.https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/.insteadOf https://github.com/ &"
+            $SWIFT_CI_COMMAND_EXPRESSION += "git config --global --add url.https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/.insteadOf https://github.com/ & "
           }
 
           if (-not [string]::IsNullOrEmpty("${{ matrix.definitions.pre_build_command }}")) {
-            $SWIFT_CI_COMMAND_EXPRESSION += " ${{ matrix.definitions.pre_build_command }} & "
+            $SWIFT_CI_COMMAND_EXPRESSION += "${{ matrix.definitions.pre_build_command }} & "
           }
 
-          SWIFT_CI_COMMAND_EXPRESSION += " ${{ matrix.definitions.build_command }} ${{ matrix.definitions.build_command_options }}"
+          $SWIFT_CI_COMMAND_EXPRESSION += "${{ matrix.definitions.build_command }} ${{ matrix.definitions.build_command_options }}"
 
-          SWIFT_CI_RUNNER_IMAGE="${{ contains(matrix.definitions.swift_version, 'nightly') && 'swiftlang/swift' || 'swift' }}:${{ matrix.definitions.swift_version }}-${{ matrix.definitions.os_version }}"
+          $SWIFT_CI_RUNNER_IMAGE = "${{ contains(matrix.definitions.swift_version, 'nightly') && 'swiftlang/swift' || 'swift' }}:${{ matrix.definitions.swift_version }}-${{ matrix.definitions.os_version }}"
 
           $SWIFT_CI_WORKSPACE = "C:\" + (Split-Path "${{ github.workspace }}" -Leaf)
 
@@ -93,4 +94,4 @@ jobs:
             -e SWIFT_CI_COMMAND_EXPRESSION="$SWIFT_CI_COMMAND_EXPRESSION" `
             -e SWIFT_CI_WORKSPACE="$SWIFT_CI_WORKSPACE" `
             $SWIFT_CI_RUNNER_IMAGE `
-            cmd /s /c "swift --version & powershell -Command `"Invoke-Expression '$SWIFT_CI_COMMAND_EXPRESSION'`""
+            cmd /s /c "swift --version & $SWIFT_CI_COMMAND_EXPRESSION"
