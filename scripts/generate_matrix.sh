@@ -13,158 +13,63 @@
 ##
 ##===----------------------------------------------------------------------===##
 
-##===----------------------------------------------------------------------===##
-##
-## This source file is part of the SwiftNIO open source project
-##
-## Copyright (c) 2024 Apple Inc. and the SwiftNIO project authors
-## Licensed under Apache License v2.0
-##
-## See LICENSE.txt for license information
-## See CONTRIBUTORS.txt for the list of SwiftNIO project authors
-##
-## SPDX-License-Identifier: Apache-2.0
-##
-##===----------------------------------------------------------------------===##
-
-# Parameters
-linux_command="$MATRIX_LINUX_COMMAND"  # required if any Linux pipeline is enabled
-linux_setup_command="$MATRIX_LINUX_SETUP_COMMAND"
-linux_5_9_enabled="${MATRIX_LINUX_5_9_ENABLED:=true}"
-linux_5_9_command_arguments="$MATRIX_LINUX_5_9_COMMAND_ARGUMENTS"
-linux_5_10_enabled="${MATRIX_LINUX_5_10_ENABLED:=true}"
-linux_5_10_command_arguments="$MATRIX_LINUX_5_10_COMMAND_ARGUMENTS"
-linux_6_0_enabled="${MATRIX_LINUX_6_0_ENABLED:=true}"
-linux_6_0_command_arguments="$MATRIX_LINUX_6_0_COMMAND_ARGUMENTS"
-linux_6_1_enabled="${MATRIX_LINUX_6_1_ENABLED:=true}"
-linux_6_1_command_arguments="$MATRIX_LINUX_6_1_COMMAND_ARGUMENTS"
-linux_nightly_release_enabled="${MATRIX_LINUX_NIGHTLY_RELEASE_ENABLED:=true}"
-linux_nightly_release_command_arguments="$MATRIX_LINUX_NIGHTLY_RELEASE_COMMAND_ARGUMENTS"
-linux_nightly_main_enabled="${MATRIX_LINUX_NIGHTLY_MAIN_ENABLED:=true}"
-linux_nightly_main_command_arguments="$MATRIX_LINUX_NIGHTLY_MAIN_COMMAND_ARGUMENTS"
-
-windows_command="$MATRIX_WINDOWS_COMMAND"  # required if any Windows pipeline is enabled
-windows_setup_command="$MATRIX_WINDOWS_SETUP_COMMAND"
-windows_6_0_enabled="${MATRIX_WINDOWS_6_0_ENABLED:=false}"
-windows_6_0_command_arguments="$MATRIX_WINDOWS_6_0_COMMAND_ARGUMENTS"
-windows_6_1_enabled="${MATRIX_WINDOWS_6_1_ENABLED:=false}"
-windows_6_1_command_arguments="$MATRIX_WINDOWS_6_1_COMMAND_ARGUMENTS"
-windows_nightly_release_enabled="${MATRIX_WINDOWS_NIGHTLY_RELEASE_ENABLED:=false}"
-windows_nightly_release_command_arguments="${MATRIX_WINDOWS_NIGHTLY_RELEASE_COMMAND_ARGUMENTS}"
-windows_nightly_main_enabled="${MATRIX_WINDOWS_NIGHTLY_MAIN_ENABLED:=false}"
-windows_nightly_main_command_arguments="$MATRIX_WINDOWS_NIGHTLY_MAIN_COMMAND_ARGUMENTS"
-
-# Defaults
-linux_runner="ubuntu-latest"
-windows_runner="windows-2022"
-windows_nightly_runner="windows-2019"
-
 # Create matrix from inputs
-matrix='{"config": []}'
+matrix='{"definitions": []}'
 
-## Linux
-if [[ "$linux_5_9_enabled" == "true" || "$linux_5_10_enabled" == "true" || "$linux_6_0_enabled" == "true" || "$linux_6_1_enabled" == "true" || \
-  "$linux_nightly_release_enabled" == "true" || "$linux_nightly_main_enabled" == "true" ]]; then
-  if [[ -z "$linux_command" ]]; then
-    echo "No linux command defined"; exit 1
-  fi
-fi
-
-if [[ "$linux_5_9_enabled" == "true" ]]; then
+matrix_append_definition() {
   matrix=$(echo "$matrix" | jq -c \
-    --arg setup_command "$linux_setup_command"  \
-    --arg command "$linux_command"  \
-    --arg command_arguments "$linux_5_9_command_arguments" \
-    --arg runner "$linux_runner" \
-    '.config[.config| length] |= . + { "os_version": "jammy", "swift_version": "5.9", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
+    --arg platform "$1" \
+    --arg runner "$2" \
+    --arg swift_version "$3" \
+    --arg os_version "$4" \
+    --arg pre_build_command "$5" \
+    --arg command "$6"  \
+    --arg command_options "$7" \
+    '.definitions[.definitions| length] |= . + { "platform": $platform, "runner": $runner, "swift_version": $swift_version, "os_version": $os_version, "pre_build_command": $pre_build_command, "build_command": $command, "build_command_options": $command_options }')
+}
+
+# Linux CI Matrix
+if [ "$MATRIX_LINUX_5_9_ENABLED" == "true" ]; then
+  matrix_append_definition "Linux" "ubuntu-latest" "5.9" "jammy" "$MATRIX_LINUX_PRE_BUILD_COMMAND" "$MATRIX_LINUX_BUILD_COMMAND" "${MATRIX_LINUX_5_9_BUILD_COMMAND_OPTIONS:-$MATRIX_LINUX_BUILD_COMMAND_OPTIONS}"
 fi
 
-if [[ "$linux_5_10_enabled" == "true" ]]; then
-  matrix=$(echo "$matrix" | jq -c \
-    --arg setup_command "$linux_setup_command"  \
-    --arg command "$linux_command"  \
-    --arg command_arguments "$linux_5_10_command_arguments" \
-    --arg runner "$linux_runner" \
-    '.config[.config| length] |= . + { "os_version": "jammy", "swift_version": "5.10", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
+if [ "$MATRIX_LINUX_5_10_ENABLED" == "true" ]; then
+  matrix_append_definition "Linux" "ubuntu-latest" "5.10" "jammy" "$MATRIX_LINUX_PRE_BUILD_COMMAND" "$MATRIX_LINUX_BUILD_COMMAND" "${MATRIX_LINUX_5_10_BUILD_COMMAND_OPTIONS:-$MATRIX_LINUX_BUILD_COMMAND_OPTIONS}"
 fi
 
-if [[ "$linux_6_0_enabled" == "true" ]]; then
-  matrix=$(echo "$matrix" | jq -c \
-    --arg setup_command "$linux_setup_command"  \
-    --arg command "$linux_command"  \
-    --arg command_arguments "$linux_6_0_command_arguments" \
-    --arg runner "$linux_runner" \
-    '.config[.config| length] |= . + { "os_version": "jammy", "swift_version": "6.0", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
+if [ "$MATRIX_LINUX_6_0_ENABLED" == "true" ]; then
+  matrix_append_definition "Linux" "ubuntu-latest" "6.0" "jammy" "$MATRIX_LINUX_PRE_BUILD_COMMAND" "$MATRIX_LINUX_BUILD_COMMAND" "${MATRIX_LINUX_6_0_BUILD_COMMAND_OPTIONS:-$MATRIX_LINUX_BUILD_COMMAND_OPTIONS}"
 fi
 
-if [[ "$linux_6_1_enabled" == "true" ]]; then
-  matrix=$(echo "$matrix" | jq -c \
-    --arg setup_command "$linux_setup_command"  \
-    --arg command "$linux_command"  \
-    --arg command_arguments "$linux_6_1_command_arguments" \
-    --arg runner "$linux_runner" \
-    '.config[.config| length] |= . + { "os_version": "jammy", "swift_version": "6.1", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
+if [ "$MATRIX_LINUX_6_1_ENABLED" == "true" ]; then
+  matrix_append_definition "Linux" "ubuntu-latest" "6.1" "jammy" "$MATRIX_LINUX_PRE_BUILD_COMMAND" "$MATRIX_LINUX_BUILD_COMMAND" "${MATRIX_LINUX_6_1_BUILD_COMMAND_OPTIONS:-$MATRIX_LINUX_BUILD_COMMAND_OPTIONS}"
 fi
 
-if [[ "$linux_nightly_release_enabled" == "true" ]]; then
-  matrix=$(echo "$matrix" | jq -c \
-    --arg setup_command "$linux_setup_command"  \
-    --arg command "$linux_command"  \
-    --arg command_arguments "$linux_nightly_release_command_arguments" \
-    --arg runner "$linux_runner" \
-    '.config[.config| length] |= . + { "os_version": "jammy", "swift_version": "nightly-6.1", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
+if [ "$MATRIX_LINUX_NIGHTLY_RELEASE_ENABLED" == "true" ]; then
+  matrix_append_definition "Linux" "ubuntu-latest" "nightly-6.1" "jammy" "$MATRIX_LINUX_PRE_BUILD_COMMAND" "$MATRIX_LINUX_BUILD_COMMAND" "${MATRIX_LINUX_NIGHTLY_RELEASE_BUILD_COMMAND_OPTIONS:-$MATRIX_LINUX_BUILD_COMMAND_OPTIONS}"
 fi
 
-if [[ "$linux_nightly_main_enabled" == "true" ]]; then
-  matrix=$(echo "$matrix" | jq -c \
-    --arg setup_command "$linux_setup_command"  \
-    --arg command "$linux_command"  \
-    --arg command_arguments "$linux_nightly_main_command_arguments" \
-    --arg runner "$linux_runner" \
-    '.config[.config| length] |= . + { "os_version": "jammy", "swift_version": "nightly-main", "platform": "Linux", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner}')
+if [ "$MATRIX_LINUX_NIGHTLY_MAIN_ENABLED" == "true" ]; then
+  matrix_append_definition "Linux" "ubuntu-latest" "nightly-main" "jammy" "$MATRIX_LINUX_PRE_BUILD_COMMAND" "$MATRIX_LINUX_BUILD_COMMAND" "${MATRIX_LINUX_NIGHTLY_MAIN_BUILD_COMMAND_OPTIONS:-$MATRIX_LINUX_BUILD_COMMAND_OPTIONS}"
 fi
 
-## Windows
-if [[ "$windows_6_0_enabled" == "true" || "$windows_nightly_release_enabled" == "true" || "$windows_nightly_main_enabled" == "true" ]]; then
-  if [[ -z "$windows_command" ]]; then
-    echo "No windows command defined"; exit 1
-  fi
+
+# # Windows CI Matrix
+if [ "$MATRIX_WINDOWS_6_0_ENABLED" == "true" ]; then
+  matrix_append_definition "Windows" "windows-2022" "6.0" "windowsservercore-ltsc2022" "$MATRIX_WINDOWS_PRE_BUILD_COMMAND" "$MATRIX_WINDOWS_BUILD_COMMAND" "${MATRIX_WINDOWS_6_0_BUILD_COMMAND_OPTIONS:-$MATRIX_WINDOWS_BUILD_COMMAND_OPTIONS}"
 fi
 
-if [[ "$windows_6_0_enabled" == "true" ]]; then
-  matrix=$(echo "$matrix" | jq -c \
-    --arg setup_command "$windows_setup_command"  \
-    --arg command "$windows_command"  \
-    --arg command_arguments "$windows_6_0_command_arguments" \
-    --arg runner "$windows_runner" \
-    '.config[.config| length] |= . + { "os_version": "windows-2022", "swift_version": "6.0", "platform": "Windows", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner }')
+if [ "$MATRIX_WINDOWS_6_1_ENABLED" == "true" ]; then
+  matrix_append_definition "Windows" "windows-2022" "6.1" "windowsservercore-ltsc2022" "$MATRIX_WINDOWS_PRE_BUILD_COMMAND" "$MATRIX_WINDOWS_BUILD_COMMAND" "${MATRIX_WINDOWS_6_1_BUILD_COMMAND_OPTIONS:-$MATRIX_WINDOWS_BUILD_COMMAND_OPTIONS}"
 fi
 
-if [[ "$windows_6_1_enabled" == "true" ]]; then
-  matrix=$(echo "$matrix" | jq -c \
-    --arg setup_command "$windows_setup_command"  \
-    --arg command "$windows_command"  \
-    --arg command_arguments "$windows_6_1_command_arguments" \
-    --arg runner "$windows_runner" \
-    '.config[.config| length] |= . + { "os_version": "windows-2022", "swift_version": "6.1", "platform": "Windows", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner }')
+if [ "$MATRIX_WINDOWS_NIGHTLY_RELEASE_ENABLED" == "true" ]; then
+  matrix_append_definition "Windows" "windows-2019" "nightly-6.1" "windowsservercore-1809" "$MATRIX_WINDOWS_PRE_BUILD_COMMAND" "$MATRIX_WINDOWS_BUILD_COMMAND" "${MATRIX_WINDOWS_NIGHTLY_RELEASE_BUILD_COMMAND_OPTIONS:-$MATRIX_WINDOWS_BUILD_COMMAND_OPTIONS}"
 fi
 
-if [[ "$windows_nightly_release_enabled" == "true" ]]; then
-  matrix=$(echo "$matrix" | jq -c \
-    --arg setup_command "$windows_setup_command"  \
-    --arg command "$windows_command"  \
-    --arg command_arguments "$windows_nightly_release_command_arguments" \
-    --arg runner "$windows_nightly_runner" \
-    '.config[.config| length] |= . + { "os_version": "windows-2019", "swift_version": "nightly-6.1", "platform": "Windows", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner }')
-fi
-
-if [[ "$windows_nightly_main_enabled" == "true" ]]; then
-  matrix=$(echo "$matrix" | jq -c \
-    --arg setup_command "$windows_setup_command"  \
-    --arg command "$windows_command"  \
-    --arg command_arguments "$windows_nightly_main_command_arguments" \
-    --arg runner "$windows_nightly_runner" \
-    '.config[.config| length] |= . + { "os_version": "windows-2019", "swift_version": "nightly-main", "platform": "Windows", "command": $command, "command_arguments": $command_arguments, "setup_command": $setup_command, "runner": $runner }')
+if [ "$MATRIX_WINDOWS_NIGHTLY_MAIN_ENABLED" == "true" ]; then
+  matrix_append_definition "Windows" "windows-2019" "nightly-main" "windowsservercore-1809" "$MATRIX_WINDOWS_PRE_BUILD_COMMAND" "$MATRIX_WINDOWS_BUILD_COMMAND" "${MATRIX_WINDOWS_NIGHTLY_MAIN_BUILD_COMMAND_OPTIONS:-$MATRIX_WINDOWS_BUILD_COMMAND_OPTIONS}"
 fi
 
 echo "$matrix" | jq -c
+# echo "$matrix" | jq .

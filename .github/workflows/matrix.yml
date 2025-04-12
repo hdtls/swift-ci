@@ -22,13 +22,11 @@ concurrency:
 
 jobs:
   execute-matrix:
-    name: ${{ matrix.config.platform }} (${{ matrix.config.swift_version }} - ${{ matrix.config.os_version }})
-    runs-on: ${{ matrix.config.runner }}
+    name: ${{ matrix.definitions.platform }} (${{ matrix.definitions.swift_version }} - ${{ matrix.definitions.os_version }})
+    runs-on: ${{ matrix.definitions.runner }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(inputs.matrix_string) }}
-    env:
-      SWIFT_VERSION: ${{ matrix.config.swift_version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,52 +34,63 @@ jobs:
           persist-credentials: false
           submodules: true
       - name: Run matrix job (Linux)
-        if: ${{ matrix.config.platform == 'Linux' }}
+        timeout-minutes: 60
+        if: ${{ matrix.definitions.platform == 'Linux' }}
         run: |
-          if [ -n "${{ matrix.config.setup_command }}" ]; then
-            setup_command_expression="${{ matrix.config.setup_command }} &&"
-          else
-            setup_command_expression=""
-          fi
+          SWIFT_CI_COMMAND_EXPRESSION=""
+
           if [ -n "${{ secrets.PERSONAL_ACCESS_TOKEN }}" ]; then
-            setup_command_expression="$setup_command_expression git config --global --add url.https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/.insteadOf https://github.com/ &&"
+            SWIFT_CI_COMMAND_EXPRESSION="git config --global --add url.https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/.insteadOf https://github.com/ &&"
           fi
-          workspace="/$(basename ${{ github.workspace }})"
-          docker run -v ${{ github.workspace }}:"$workspace" \
-            -w "$workspace" \
+
+          if [ -n "${{ matrix.definitions.pre_build_command }}" ]; then
+            SWIFT_CI_COMMAND_EXPRESSION="$SWIFT_CI_COMMAND_EXPRESSION ${{ matrix.definitions.pre_build_command }} && "
+          fi
+
+          SWIFT_CI_COMMAND_EXPRESSION="$SWIFT_CI_COMMAND_EXPRESSION ${{ matrix.definitions.build_command }} ${{ matrix.definitions.build_command_options }}"
+
+          SWIFT_CI_RUNNER_IMAGE="${{ contains(matrix.definitions.swift_version, 'nightly') && 'swiftlang/swift' || 'swift' }}:${{ matrix.definitions.swift_version }}-${{ matrix.definitions.os_version }}"
+
+          SWIFT_CI_WORKSPACE="/$(basename "${{ github.workspace }}")"
+
+          docker run -v "${{ github.workspace }}":"$SWIFT_CI_WORKSPACE" \
+            -w "$SWIFT_CI_WORKSPACE" \
             -e CI="$CI" \
             -e GITHUB_ACTIONS="$GITHUB_ACTIONS" \
-            -e SWIFT_VERSION="${{ matrix.config.swift_version }}" \
-            -e setup_command_expression="$setup_command_expression" \
-            -e workspace="$workspace" \
-            ${{ (contains(matrix.config.swift_version, 'nightly') && 'swiftlang/swift') || 'swift' }}:${{ matrix.config.swift_version }}-${{ matrix.config.os_version }} \
-            bash -c "$setup_command_expression ${{ matrix.config.command }} ${{ matrix.config.command_arguments }}"
-      - name: Run matrix job (Windows)
-        if: ${{ matrix.config.platform == 'Windows' }}
-        run: |
-          $setup_command_expression = ""
+            -e GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" \
+            -e SWIFT_VERSION="${{ matrix.definitions.swift_version }}" \
+            -e SWIFT_CI_COMMAND_EXPRESSION="$SWIFT_CI_COMMAND_EXPRESSION" \
+            -e SWIFT_CI_WORKSPACE="$SWIFT_CI_WORKSPACE" \
+            "$SWIFT_CI_RUNNER_IMAGE" \
+            bash -c "$SWIFT_CI_COMMAND_EXPRESSION"
 
-          if (-not [string]::IsNullOrEmpty("${{ matrix.config.setup_command }}")) {
-            $setup_command_expression = "${{ matrix.config.setup_command }} & "
-          }
+      - name: Run matrix job (Windows)
+        timeout-minutes: 60
+        if: ${{ matrix.definitions.platform == 'Windows' }}
+        run: |
+          $SWIFT_CI_COMMAND_EXPRESSION = ""
 
           if (-not [string]::IsNullOrEmpty("${{ secrets.PERSONAL_ACCESS_TOKEN }}")) {
-            $setup_command_expression += "git config --global --add url.https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/.insteadOf https://github.com/ &"
+            $SWIFT_CI_COMMAND_EXPRESSION += " git config --global --add url.https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/.insteadOf https://github.com/ &"
           }
 
-          if ("${{ matrix.config.swift_version }}".Contains("nightly")) {
-            $Image = "swiftlang/swift:${{ matrix.config.swift_version }}-windowsservercore-1809"
-          } else {
-            $Image = "swift:${{ matrix.config.swift_version }}-windowsservercore-ltsc2022"
+          if (-not [string]::IsNullOrEmpty("${{ matrix.definitions.pre_build_command }}")) {
+            $SWIFT_CI_COMMAND_EXPRESSION += " ${{ matrix.definitions.pre_build_command }} & "
           }
 
-          $workspace = "C:\" + (Split-Path "${{ github.workspace }}" -Leaf)
+          SWIFT_CI_COMMAND_EXPRESSION += " ${{ matrix.definitions.build_command }} ${{ matrix.definitions.build_command_options }}"
 
-          docker run -v "${{ github.workspace }}:$workspace" `
-            -w "$workspace" `
+          SWIFT_CI_RUNNER_IMAGE="${{ contains(matrix.definitions.swift_version, 'nightly') && 'swiftlang/swift' || 'swift' }}:${{ matrix.definitions.swift_version }}-${{ matrix.definitions.os_version }}"
+
+          $SWIFT_CI_WORKSPACE = "C:\" + (Split-Path "${{ github.workspace }}" -Leaf)
+
+          docker run -v "${{ github.workspace }}:$SWIFT_CI_WORKSPACE" `
+            -w "$SWIFT_CI_WORKSPACE" `
             -e CI=$env:CI `
             -e GITHUB_ACTIONS=$env:GITHUB_ACTIONS `
-            -e SWIFT_VERSION="${{ matrix.config.swift_version }}" `
-            -e setup_command_expression="$setup_command_expression" `
-            $Image `
-            cmd /s /c "swift --version & powershell -Command `"Invoke-Expression '$setup_command_expression ${{ matrix.config.command }} ${{ matrix.config.command_arguments }}'`""
+            -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} `
+            -e SWIFT_VERSION="${{ matrix.definitions.swift_version }}" `
+            -e SWIFT_CI_COMMAND_EXPRESSION="$SWIFT_CI_COMMAND_EXPRESSION" `
+            -e SWIFT_CI_WORKSPACE="$SWIFT_CI_WORKSPACE" `
+            $SWIFT_CI_RUNNER_IMAGE `
+            cmd /s /c "swift --version & powershell -Command `"Invoke-Expression '$SWIFT_CI_COMMAND_EXPRESSION'`""
