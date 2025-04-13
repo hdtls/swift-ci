@@ -69,7 +69,11 @@ jobs:
         timeout-minutes: 60
         if: ${{ contains(matrix.definitions.platform, 'Windows') }}
         run: |
+          $DebugPreference = "SilentlyContinue"
+          $VerbosePreference = "SilentlyContinue"
+
           if ("${{ matrix.definitions.platform }}" -eq "Windows") {
+
             # Install Visual Studio Build Tools
             Invoke-WebRequest -Uri https://raw.githubusercontent.com/swiftlang/github-workflows/main/.github/workflows/scripts/windows/install-vsb.ps1 -OutFile $env:TEMP\install-vsb.ps1
             . $env:TEMP\install-vsb.ps1
@@ -89,6 +93,9 @@ jobs:
 
           mkdir $env:TEMP\scripts
           echo @'
+          $DebugPreference = "SilentlyContinue"
+          $VerbosePreference = "SilentlyContinue"
+
           Set-PSDebug -Trace 1
           if ("${{ matrix.definitions.platform }}" -eq "Windows") {
             $Source = $env:GITHUB_WORKSPACE
@@ -98,24 +105,10 @@ jobs:
 
           # Run the command following `Invoke-Program`.
           # If that command returns a non-zero exit code, return the same exit code from this script.
-          function Invoke-Program {
-            param (
-              [string]$Executable,
-              [Parameter(ValueFromRemainingArguments = $true)]
-              [string[]]$Arguments
-            )
-
-            Write-Host "Executing $Executable with arguments: $Arguments"
-            & $Executable @Arguments 2>&1 | ForEach-Object {
-              if ($_ -is [System.Management.Automation.ErrorRecord]) {
-                Write-Host -ForegroundColor Red $_
-              } else {
-                Write-Host $_
-              }
-            }
+          function Invoke-Program($Executable) {
+            & $Executable @args 2>&1 5>$null
 
             if ($LastExitCode -ne 0) {
-              Write-Host "Failed to executing $Executable with arguments: $Arguments, exit code: $LastExitCode"
               exit $LastExitCode
             }
           }
