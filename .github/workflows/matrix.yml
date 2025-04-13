@@ -33,6 +33,7 @@ jobs:
         with:
           persist-credentials: false
           submodules: true
+
       - name: Run matrix job (Linux)
         timeout-minutes: 60
         if: ${{ matrix.definitions.platform == 'Linux' }}
@@ -62,36 +63,81 @@ jobs:
             -e SWIFT_CI_COMMAND_EXPRESSION="$SWIFT_CI_COMMAND_EXPRESSION" \
             -e SWIFT_CI_WORKSPACE="$SWIFT_CI_WORKSPACE" \
             "$SWIFT_CI_RUNNER_IMAGE" \
-            bash -c "swift --version && $SWIFT_CI_COMMAND_EXPRESSION"
+            bash -c "swift --version  && swift test --version && $SWIFT_CI_COMMAND_EXPRESSION"
 
       - name: Run matrix job (Windows windowsservercore)
         timeout-minutes: 60
-        if: ${{ matrix.definitions.platform == 'Windows' }}
-        shell: pwsh
+        if: ${{ matrix.definitions.platform == 'Windows windowsservercore' }}
         run: |
-          $SWIFT_CI_COMMAND_EXPRESSION = ""
+          mkdir $env:TEMP\scripts
+          echo @'
+          Set-PSDebug -Trace 1
+          $Source = "C:\_w\work"
+          $Image = "${{ contains(matrix.definitions.swift_version, 'nightly') && 'swiftlang/swift' || 'swift' }}:${{ matrix.definitions.swift_version }}-${{ matrix.definitions.os_version }}"
 
-          if (-not [string]::IsNullOrEmpty("${{ secrets.PERSONAL_ACCESS_TOKEN }}")) {
-            $SWIFT_CI_COMMAND_EXPRESSION += "git config --global --add url.https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/.insteadOf https://github.com/ & "
+          # Run the command following `Invoke-Program`.
+          # If that command returns a non-zero exit code, return the same exit code from this script.
+          function Invoke-Program($Executable) {
+            & $Executable @args
+            if ($LastExitCode -ne 0) {
+              exit $LastExitCode
+            }
           }
+          Invoke-Program swift --version
+          Invoke-Program swift test --version
+          Invoke-Program cd $Source
 
-          if (-not [string]::IsNullOrEmpty("${{ matrix.definitions.pre_build_command }}")) {
-            $SWIFT_CI_COMMAND_EXPRESSION += "${{ matrix.definitions.pre_build_command }} & "
+          # if (-not [string]::IsNullOrEmpty("${{ secrets.PERSONAL_ACCESS_TOKEN }}")) {
+          #   Invoke-Program git config --global --add url.https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/.insteadOf https://github.com/
+          # }
+
+          ${{ matrix.definitions.windows_pre_build_command }}
+          Invoke-Program ${{ matrix.definitions.windows_build_command }} ${{ matrix.definitions.windows_build_command_options }}
+          '@ >> $env:TEMP\scripts\run.ps1
+
+          docker run -v ${{ github.workspace }}:C:\_w\work -v $env:TEMP\scripts:C:\_w\scripts -e CI=$env:CI -e GITHUB_ACTIONS=$env:GITHUB_ACTIONS -e SWIFT_VERSION=${{ matrix.definitions.swift_version }} $Image powershell.exe -NoLogo -File C:\_w\scripts\run.ps1
+
+      - name: Run matrix job (Windows)
+        timeout-minutes: 60
+        if: ${{ matrix.definitions.platform == 'Windows' }}
+        env:
+          SWIFT_VERSION: ${{ matrix.definitions.swift_version }}
+        run: |
+          Invoke-WebRequest -Uri https://raw.githubusercontent.com/swiftlang/github-workflows/refs/heads/main/.github/workflows/scripts/windows/install-vsb.ps1 -OutFile $env:TEMP\install-vsb.ps1
+          . $env:TEMP\install-vsb.ps1
+          del $env:TEMP\install-vsb.ps1
+
+          Invoke-WebRequest -Uri https://raw.githubusercontent.com/swiftlang/github-workflows/refs/heads/main/.github/workflows/scripts/windows/swift/install-swift.ps1 -OutFile $env:TEMP\install-swift.ps1
+          Invoke-WebRequest -Uri https://raw.githubusercontent.com/swiftlang/github-workflows/refs/heads/main/.github/workflows/scripts/windows/swift/install-swift-${{ matrix.swift_version }}.ps1 -OutFile $env:TEMP\install-swift-${{ matrix.swift_version }}.ps1
+          . $env:TEMP\install-swift-${{ matrix.swift_version }}.ps1
+          del $env:TEMP\install-swift*.ps1
+
+          mkdir $env:TEMP\scripts
+          echo @'
+          Set-PSDebug -Trace 1
+          $Source = $env:GITHUB_WORKSPACE
+          $Image = "${{ contains(matrix.definitions.swift_version, 'nightly') && 'swiftlang/swift' || 'swift' }}:${{ matrix.definitions.swift_version }}-${{ matrix.definitions.os_version }}"
+
+          # Run the command following `Invoke-Program`.
+          # If that command returns a non-zero exit code, return the same exit code from this script.
+          function Invoke-Program($Executable) {
+            & $Executable @args
+            if ($LastExitCode -ne 0) {
+              exit $LastExitCode
+            }
           }
+          Invoke-Program swift --version
+          Invoke-Program swift test --version
+          Invoke-Program cd $Source
 
-          $SWIFT_CI_COMMAND_EXPRESSION += "${{ matrix.definitions.build_command }} ${{ matrix.definitions.build_command_options }}"
+          # if (-not [string]::IsNullOrEmpty("${{ secrets.PERSONAL_ACCESS_TOKEN }}")) {
+          #   Invoke-Program git config --global --add url.https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/.insteadOf https://github.com/
+          # }
 
-          $SWIFT_CI_RUNNER_IMAGE = "${{ contains(matrix.definitions.swift_version, 'nightly') && 'swiftlang/swift' || 'swift' }}:${{ matrix.definitions.swift_version }}-${{ matrix.definitions.os_version }}"
+          Invoke-Program ${{ matrix.definitions.windows_pre_build_command }}
+          Invoke-Program ${{ matrix.definitions.windows_build_command }} ${{ matrix.definitions.windows_build_command_options }}
+          '@ >> $env:TEMP\scripts\run.ps1
 
-          $SWIFT_CI_WORKSPACE = "C:\" + (Split-Path "${{ github.workspace }}" -Leaf)
-
-          docker run -v "${{ github.workspace }}:$SWIFT_CI_WORKSPACE" `
-            -w "$SWIFT_CI_WORKSPACE" `
-            -e CI=$env:CI `
-            -e GITHUB_ACTIONS=$env:GITHUB_ACTIONS `
-            -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} `
-            -e SWIFT_VERSION="${{ matrix.definitions.swift_version }}" `
-            -e SWIFT_CI_COMMAND_EXPRESSION="$SWIFT_CI_COMMAND_EXPRESSION" `
-            -e SWIFT_CI_WORKSPACE="$SWIFT_CI_WORKSPACE" `
-            $SWIFT_CI_RUNNER_IMAGE `
-            cmd /s /c "swift --version & $SWIFT_CI_COMMAND_EXPRESSION"
+          Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
+          RefreshEnv
+          powershell.exe -NoLogo -File $env:TEMP\scripts\run.ps1; exit $LastExitCode
