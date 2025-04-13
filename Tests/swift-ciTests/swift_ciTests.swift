@@ -23,11 +23,11 @@
 #if swift(>=6.0)
   @Test func example() async throws {
     // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+
   }
 #else
   final class Swift_ciTests: XCTestCase {
     func testExample() throws {
-
     }
   }
 #endif
