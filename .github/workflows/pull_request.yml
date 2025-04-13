@@ -17,6 +17,8 @@ jobs:
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
+      machine: ""
+
       linux_build_command_options: "-Xswiftc -warnings-as-errors --explicit-target-dependency-import-check error"
       linux_nightly_main_build_command_options: "--explicit-target-dependency-import-check error"
 

@@ -3,6 +3,11 @@ name: Unit tests
 on:
   workflow_call:
     inputs:
+      machine:
+        type: string
+        description: "Define the target machine for matrix job actually runs on, there are three values available here: docker (run jobs in docker container), host (run jobs on host directlly), any other values will make jobs run on both docker and host machine. Defaults to docker."
+        default: "docker"
+
       linux_pre_build_command:
         type: string
         default: ""
@@ -120,6 +125,8 @@ jobs:
           persist-credentials: false
       - id: generate-matrix
         env:
+          MATRIX_MACHINE: ${{ inputs.machine }}
+
           MATRIX_LINUX_PRE_BUILD_COMMAND: ${{ inputs.linux_pre_build_command }}
           MATRIX_LINUX_BUILD_COMMAND: ${{ inputs.linux_build_command}}
           MATRIX_LINUX_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_build_command_options }}
