@@ -114,7 +114,7 @@ on:
 
 jobs:
   construct-matrix:
-    name: Build matrix
+    name: Matrix
     runs-on: ubuntu-latest
     outputs:
       unit-test-matrix: "${{ steps.generate-matrix.outputs.unit-test-matrix }}"
