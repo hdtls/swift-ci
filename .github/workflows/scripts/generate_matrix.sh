@@ -1,13 +1,13 @@
 #!/bin/bash
 ##===----------------------------------------------------------------------===##
 ##
-## This source file is part of the Netbot open source project
+## This source file is part of the SwiftCI open source project
 ##
-## Copyright (c) 2025 Junfeng Zhang and the Netbot project authors
+## Copyright (c) 2025 Junfeng Zhang and the SwiftCI project authors
 ## Licensed under Apache License v2.0
 ##
 ## See LICENSE.txt for license information
-## See CONTRIBUTORS.txt for the list of Netbot project authors
+## See CONTRIBUTORS.txt for the list of SwiftCI project authors
 ##
 ## SPDX-License-Identifier: Apache-2.0
 ##
