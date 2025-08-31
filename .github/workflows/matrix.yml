@@ -50,7 +50,6 @@ jobs:
 
       - name: Run matrix job (Linux)
         timeout-minutes: 60
-        if: ${{ matrix.definitions.platform == 'Linux' }}
         run: |
           if [ -n "${{ secrets.PERSONAL_ACCESS_TOKEN }}" ]; then
             git config --global --add url."https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/".insteadOf "https://github.com/"
@@ -75,7 +74,6 @@ jobs:
 
       - name: Run matrix job (Windows)
         timeout-minutes: 60
-        if: ${{ contains(matrix.definitions.platform, 'Windows') }}
         run: |
           mkdir $env:TEMP\scripts
           echo @'
