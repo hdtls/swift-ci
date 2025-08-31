@@ -119,10 +119,6 @@ jobs:
     outputs:
       unit-test-matrix: "${{ steps.generate-matrix.outputs.unit-test-matrix }}"
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
       - id: generate-matrix
         env:
           MATRIX_MACHINE: ${{ inputs.machine }}
@@ -160,7 +156,6 @@ jobs:
   unit-tests:
     name: Unit tests
     needs: construct-matrix
-    # Workaround https://github.com/nektos/act/issues/1875
     uses: hdtls/swift-ci/.github/workflows/matrix.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
