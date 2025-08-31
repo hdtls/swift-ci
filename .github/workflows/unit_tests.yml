@@ -154,23 +154,23 @@ jobs:
           echo "windows-test-matrix=$(curl -H 'Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}' -H 'Accept: application/vnd.github.v3.raw' -L -s https://raw.githubusercontent.com/hdtls/swift-ci/main/.github/workflows/scripts/generate_matrix.sh | bash)" >> "$GITHUB_OUTPUT"
 
   linux:
-    name: Unix tests
+    name: Unix tests (Linux)
     needs: construct-matrix
     uses: hdtls/swift-ci/.github/workflows/matrix.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
-      name: Unix tests
+      name: Unix tests (Linux)
       platform: Linux
       matrix_string: "${{ needs.construct-matrix.outputs.linux-test-matrix }}"
 
   windows:
-    name: Unix tests
+    name: Unix tests (Windows)
     needs: construct-matrix
     uses: hdtls/swift-ci/.github/workflows/matrix.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
-      name: Unix tests
+      name: Unix tests (Windows)
       platform: Windows
       matrix_string: "${{ needs.construct-matrix.outputs.windows-test-matrix }}"
