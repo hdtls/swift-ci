@@ -11,6 +11,11 @@ on:
         type: string
         description: "The test matrix definition."
         required: true
+      platform:
+        type: string
+        description: "The platform to run the jobs. e.g. Linux, Windows, macOS"
+        required: true
+
     secrets:
       PERSONAL_ACCESS_TOKEN:
         required: true
@@ -21,8 +26,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  execute-matrix:
+  linux:
     name: ${{ matrix.definitions.platform }} (${{ matrix.definitions.swift_version }} - ${{ matrix.definitions.os_version }})
+    if: ${{ inputs.platform == 'Linux' }}
     runs-on: ${{ matrix.definitions.runner }}
     strategy:
       fail-fast: false
@@ -53,13 +59,57 @@ jobs:
           ${{ matrix.definitions.pre_build_command }}
           ${{ matrix.definitions.build_command }} ${{ matrix.definitions.build_command_options }}
 
+  windows:
+    name: ${{ matrix.definitions.platform }} (${{ matrix.definitions.swift_version }} - ${{ matrix.definitions.os_version }})
+    if: ${{ inputs.platform == 'Windows' }}
+    runs-on: ${{ matrix.definitions.runner }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(inputs.matrix_string) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: true
+
       - name: Run matrix job (Windows)
         timeout-minutes: 60
-        if: ${{ matrix.definitions.platform == 'Windows windowsservercore' }}
+        if: ${{ contains(matrix.definitions.platform, 'Windows') }}
         run: |
+          $DebugPreference = "SilentlyContinue"
+          $VerbosePreference = "SilentlyContinue"
+
+          if ("${{ matrix.definitions.platform }}" -eq "Windows") {
+
+            # Install Visual Studio Build Tools
+            . $env:TEMP\install-vsb.ps1
+            Invoke-WebRequest -Uri https://raw.githubusercontent.com/swiftlang/github-workflows/main/.github/workflows/scripts/windows/install-vsb.ps1 -OutFile $env:TEMP\install-vsb.ps1
+            del $env:TEMP\install-vsb.ps1
+
+            # Install Swift
+            $Url =  "https://raw.githubusercontent.com/swiftlang/github-workflows/main/.github/workflows/scripts/windows/swift/install-swift-${{ matrix.definitions.swift_version }}.ps1"
+            if ("${{ matrix.definitions.swift_version }}".Contains("nightly-main")) {
+              $Url =  "https://raw.githubusercontent.com/swiftlang/github-workflows/main/.github/workflows/scripts/windows/swift/install-swift-nightly.ps1"
+            }
+            Invoke-WebRequest -Uri https://raw.githubusercontent.com/swiftlang/github-workflows/main/.github/workflows/scripts/windows/swift/install-swift.ps1 -OutFile $env:TEMP\install-swift.ps1
+            Invoke-WebRequest -Uri $Url -OutFile $env:TEMP\install-swift-${{ matrix.definitions.swift_version }}.ps1
+
+            . $env:TEMP\install-swift-${{ matrix.definitions.swift_version }}.ps1
+            del $env:TEMP\install-swift*.ps1
+          }
+
           mkdir $env:TEMP\scripts
           echo @'
+          $DebugPreference = "SilentlyContinue"
+          $VerbosePreference = "SilentlyContinue"
+
           Set-PSDebug -Trace 1
+          if ("${{ matrix.definitions.platform }}" -eq "Windows") {
+            $Source = $env:GITHUB_WORKSPACE
+          } else {
+            $Source = "C:\_w\work"
+          }
 
           # Run the command following `Invoke-Program`.
           # If that command returns a non-zero exit code, return the same exit code from this script.
@@ -71,12 +121,23 @@ jobs:
             }
           }
 
+          Invoke-Program swift --version
+          Invoke-Program swift test --version
+          Invoke-Program cd $Source
+
           if (-not [string]::IsNullOrEmpty("${{ secrets.PERSONAL_ACCESS_TOKEN }}")) {
             Invoke-Program git config --global --add url."https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/".insteadOf "https://github.com/"
           }
 
           ${{ matrix.definitions.pre_build_command }}
-          ${{ matrix.definitions.build_command }} ${{ matrix.definitions.build_command_options }}
+          Invoke-Program ${{ matrix.definitions.build_command }} ${{ matrix.definitions.build_command_options }}
           '@ >> $env:TEMP\scripts\run.ps1
 
-          powershell.exe -NoLogo -File $env:TEMP\scripts\run.ps1
+          if ("${{ matrix.definitions.platform }}" -eq "Windows") {
+            Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
+            RefreshEnv
+            powershell.exe -NoLogo -File $env:TEMP\scripts\run.ps1; exit $LastExitCode
+          } else {
+            $Image = "${{ contains(matrix.definitions.swift_version, 'nightly') && 'swiftlang/swift' || 'swift' }}:${{ matrix.definitions.swift_version }}-${{ matrix.definitions.os_version }}"
+            docker run -v ${{ github.workspace }}:C:\_w\work -v $env:TEMP\scripts:C:\_w\scripts -e CI=$env:CI -e GITHUB_ACTIONS=$env:GITHUB_ACTIONS -e SWIFT_VERSION=${{ matrix.definitions.swift_version }} $Image powershell.exe -NoLogo -File C:\_w\scripts\run.ps1
+          }

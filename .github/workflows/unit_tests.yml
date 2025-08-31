@@ -117,12 +117,11 @@ jobs:
     name: Matrix
     runs-on: ubuntu-latest
     outputs:
-      unit-test-matrix: "${{ steps.generate-matrix.outputs.unit-test-matrix }}"
+      linux-test-matrix: ${{ steps.generate-linux-matrix.outputs.linux-test-matrix }}
+      windows-test-matrix: ${{ steps.generate-windows-matrix.outputs.windows-test-matrix }}
     steps:
-      - id: generate-matrix
+      - id: generate-linux-matrix
         env:
-          MATRIX_MACHINE: ${{ inputs.machine }}
-
           MATRIX_LINUX_PRE_BUILD_COMMAND: ${{ inputs.linux_pre_build_command }}
           MATRIX_LINUX_BUILD_COMMAND: ${{ inputs.linux_build_command}}
           MATRIX_LINUX_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_build_command_options }}
@@ -138,6 +137,12 @@ jobs:
           MATRIX_LINUX_NIGHTLY_RELEASE_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_nightly_release_build_command_options }}
           MATRIX_LINUX_NIGHTLY_MAIN_ENABLED: ${{ inputs.linux_nightly_main_enabled }}
           MATRIX_LINUX_NIGHTLY_MAIN_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_nightly_main_build_command_options }}
+        run: |
+          echo "linux-test-matrix=$(curl -H 'Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}' -H 'Accept: application/vnd.github.v3.raw' -L -s https://raw.githubusercontent.com/hdtls/swift-ci/main/.github/workflows/scripts/generate_matrix.sh | bash)" >> "$GITHUB_OUTPUT"
+
+      - id: generate-windows-matrix
+        env:
+          MATRIX_MACHINE: ${{ inputs.machine }}
 
           MATRIX_WINDOWS_PRE_BUILD_COMMAND: ${{ inputs.windows_pre_build_command }}
           MATRIX_WINDOWS_BUILD_COMMAND: ${{ inputs.windows_build_command }}
@@ -151,14 +156,27 @@ jobs:
           MATRIX_WINDOWS_NIGHTLY_MAIN_ENABLED: ${{ inputs.windows_nightly_main_enabled }}
           MATRIX_WINDOWS_NIGHTLY_MAIN_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_nightly_main_build_command_options }}
         run: |
-          echo "unit-test-matrix=$(curl -H 'Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}' -H 'Accept: application/vnd.github.v3.raw' -L -s https://raw.githubusercontent.com/hdtls/swift-ci/main/.github/workflows/scripts/generate_matrix.sh | bash)" >> "$GITHUB_OUTPUT"
+          echo "windows-test-matrix=$(curl -H 'Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}' -H 'Accept: application/vnd.github.v3.raw' -L -s https://raw.githubusercontent.com/hdtls/swift-ci/main/.github/workflows/scripts/generate_matrix.sh | bash)" >> "$GITHUB_OUTPUT"
 
-  unit-tests:
-    name: Unit tests
+  linux:
+    name: Unix tests
     needs: construct-matrix
-    uses: hdtls/swift-ci/.github/workflows/matrix.yml@main
+    # uses: hdtls/swift-ci/.github/workflows/matrix.yml@main
+    uses: ./.github/workflows/matrix.yml
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
-      name: "Unit tests"
-      matrix_string: "${{ needs.construct-matrix.outputs.unit-test-matrix }}"
+      name: Unix tests
+      platform: Linux
+      matrix_string: "${{ needs.construct-matrix.outputs.linux-test-matrix }}"
+
+  windows:
+    name: Unix tests
+    needs: construct-matrix
+    uses: ./.github/workflows/matrix.yml
+    secrets:
+      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    with:
+      name: Unix tests
+      platform: Windows
+      matrix_string: "${{ needs.construct-matrix.outputs.windows-test-matrix }}"
