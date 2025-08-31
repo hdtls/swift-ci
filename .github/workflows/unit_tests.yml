@@ -3,11 +3,6 @@ name: Unit tests
 on:
   workflow_call:
     inputs:
-      machine:
-        type: string
-        description: "Define the target machine for matrix job actually runs on, there are three values available here: docker (run jobs in docker container), host (run jobs on host directlly), any other values will make jobs run on both docker and host machine. Defaults to docker."
-        default: "docker"
-
       linux_pre_build_command:
         type: string
         default: ""
@@ -142,7 +137,7 @@ jobs:
 
       - id: generate-windows-matrix
         env:
-          MATRIX_MACHINE: ${{ inputs.machine }}
+          MATRIX_MACHINE: docker
 
           MATRIX_WINDOWS_PRE_BUILD_COMMAND: ${{ inputs.windows_pre_build_command }}
           MATRIX_WINDOWS_BUILD_COMMAND: ${{ inputs.windows_build_command }}
@@ -161,8 +156,7 @@ jobs:
   linux:
     name: Unix tests
     needs: construct-matrix
-    # uses: hdtls/swift-ci/.github/workflows/matrix.yml@main
-    uses: ./.github/workflows/matrix.yml
+    uses: hdtls/swift-ci/.github/workflows/matrix.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
@@ -173,7 +167,7 @@ jobs:
   windows:
     name: Unix tests
     needs: construct-matrix
-    uses: ./.github/workflows/matrix.yml
+    uses: hdtls/swift-ci/.github/workflows/matrix.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
