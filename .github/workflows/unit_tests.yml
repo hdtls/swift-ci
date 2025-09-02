@@ -108,69 +108,42 @@ on:
         required: false
 
 jobs:
-  construct-matrix:
-    name: Matrix
-    runs-on: ubuntu-latest
-    outputs:
-      linux-test-matrix: ${{ steps.generate-linux-matrix.outputs.linux-test-matrix }}
-      windows-test-matrix: ${{ steps.generate-windows-matrix.outputs.windows-test-matrix }}
-    steps:
-      - id: generate-linux-matrix
-        env:
-          MATRIX_LINUX_PRE_BUILD_COMMAND: ${{ inputs.linux_pre_build_command }}
-          MATRIX_LINUX_BUILD_COMMAND: ${{ inputs.linux_build_command}}
-          MATRIX_LINUX_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_build_command_options }}
-          MATRIX_LINUX_5_9_ENABLED: ${{ inputs.linux_5_9_enabled }}
-          MATRIX_LINUX_5_9_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_5_9_build_command_options }}
-          MATRIX_LINUX_5_10_ENABLED: ${{ inputs.linux_5_10_enabled }}
-          MATRIX_LINUX_5_10_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_5_10_build_command_options }}
-          MATRIX_LINUX_6_0_ENABLED: ${{ inputs.linux_6_0_enabled }}
-          MATRIX_LINUX_6_0_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_6_0_build_command_options }}
-          MATRIX_LINUX_6_1_ENABLED: ${{ inputs.linux_6_1_enabled }}
-          MATRIX_LINUX_6_1_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_6_1_build_command_options }}
-          MATRIX_LINUX_NIGHTLY_RELEASE_ENABLED: ${{ inputs.linux_nightly_release_enabled }}
-          MATRIX_LINUX_NIGHTLY_RELEASE_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_nightly_release_build_command_options }}
-          MATRIX_LINUX_NIGHTLY_MAIN_ENABLED: ${{ inputs.linux_nightly_main_enabled }}
-          MATRIX_LINUX_NIGHTLY_MAIN_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_nightly_main_build_command_options }}
-        run: |
-          echo "linux-test-matrix=$(curl -H 'Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}' -H 'Accept: application/vnd.github.v3.raw' -L -s https://raw.githubusercontent.com/hdtls/swift-ci/main/.github/workflows/scripts/generate_matrix.sh | bash)" >> "$GITHUB_OUTPUT"
-
-      - id: generate-windows-matrix
-        env:
-          MATRIX_MACHINE: docker
-
-          MATRIX_WINDOWS_PRE_BUILD_COMMAND: ${{ inputs.windows_pre_build_command }}
-          MATRIX_WINDOWS_BUILD_COMMAND: ${{ inputs.windows_build_command }}
-          MATRIX_WINDOWS_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_build_command_options }}
-          MATRIX_WINDOWS_6_0_ENABLED: ${{ inputs.windows_6_0_enabled }}
-          MATRIX_WINDOWS_6_0_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_6_0_build_command_options }}
-          MATRIX_WINDOWS_6_1_ENABLED: ${{ inputs.windows_6_1_enabled }}
-          MATRIX_WINDOWS_6_1_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_6_1_build_command_options }}
-          MATRIX_WINDOWS_NIGHTLY_RELEASE_ENABLED: ${{ inputs.windows_nightly_release_enabled }}
-          MATRIX_WINDOWS_NIGHTLY_RELEASE_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_nightly_release_build_command_options }}
-          MATRIX_WINDOWS_NIGHTLY_MAIN_ENABLED: ${{ inputs.windows_nightly_main_enabled }}
-          MATRIX_WINDOWS_NIGHTLY_MAIN_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_nightly_main_build_command_options }}
-        run: |
-          echo "windows-test-matrix=$(curl -H 'Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}' -H 'Accept: application/vnd.github.v3.raw' -L -s https://raw.githubusercontent.com/hdtls/swift-ci/main/.github/workflows/scripts/generate_matrix.sh | bash)" >> "$GITHUB_OUTPUT"
-
-  linux:
+  unit-tests-linux:
     name: Unix tests (Linux)
-    needs: construct-matrix
-    uses: hdtls/swift-ci/.github/workflows/matrix.yml@main
+    uses: hdtls/swift-ci/.github/workflows/unit_tests_linux.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
-      name: Unix tests (Linux)
-      platform: Linux
-      matrix_string: "${{ needs.construct-matrix.outputs.linux-test-matrix }}"
+      linux_pre_build_command: ${{ inputs.linux_pre_build_command }}
+      linux_build_command: ${{ inputs.linux_build_command }}
+      linux_build_command_options: ${{ inputs.linux_build_command_options }}
+      linux_5_9_enabled: ${{ inputs.linux_5_9_enabled }}
+      linux_5_9_build_command_options: ${{ inputs.linux_5_9_build_command_options }}
+      linux_5_10_enabled: ${{ inputs.linux_5_10_enabled }}
+      linux_5_10_build_command_options: ${{ inputs.linux_5_10_build_command_options }}
+      linux_6_0_enabled: ${{ inputs.linux_6_0_enabled }}
+      linux_6_0_build_command_options: ${{ inputs.linux_6_0_build_command_options }}
+      linux_6_1_enabled: ${{ inputs.linux_6_1_enabled }}
+      linux_6_1_build_command_options: ${{ inputs.linux_6_1_build_command_options }}
+      linux_nightly_release_enabled: ${{ inputs.linux_nightly_release_enabled }}
+      linux_nightly_release_build_command_options: ${{ inputs.linux_nightly_release_build_command_options }}
+      linux_nightly_main_enabled: ${{ inputs.linux_nightly_main_enabled }}
+      linux_nightly_main_build_command_options: ${{ inputs.linux_nightly_main_build_command_options }}
 
-  windows:
+  unit-tests-windows:
     name: Unix tests (Windows)
-    needs: construct-matrix
-    uses: hdtls/swift-ci/.github/workflows/matrix.yml@main
+    uses: hdtls/swift-ci/.github/workflows/unit_tests_windows.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
-      name: Unix tests (Windows)
-      platform: Windows
-      matrix_string: "${{ needs.construct-matrix.outputs.windows-test-matrix }}"
+      windows_pre_build_command: ${{ inputs.windows_pre_build_command }}
+      windows_build_command: ${{ inputs.windows_build_command }}
+      windows_build_command_options: ${{ inputs.windows_build_command_options }}
+      windows_6_0_enabled: ${{ inputs.windows_6_0_enabled }}
+      windows_6_0_build_command_options: ${{ inputs.windows_6_0_build_command_options }}
+      windows_6_1_enabled: ${{ inputs.windows_6_1_enabled }}
+      windows_6_1_build_command_options: ${{ inputs.windows_6_1_build_command_options }}
+      windows_nightly_release_enabled: ${{ inputs.windows_nightly_release_enabled }}
+      windows_nightly_release_build_command_options: ${{ inputs.windows_nightly_release_build_command_options }}
+      windows_nightly_main_enabled: ${{ inputs.windows_nightly_main_enabled }}
+      windows_nightly_main_build_command_options: ${{ inputs.windows_nightly_main_build_command_options }}

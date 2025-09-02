@@ -1,0 +1,54 @@
+name: Matrix
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        type: string
+        description: "The name of the workflow used for the concurrency group."
+        required: true
+      matrix_string:
+        type: string
+        description: "The test matrix definition."
+        required: true
+
+    secrets:
+      PERSONAL_ACCESS_TOKEN:
+        required: true
+
+# We will cancel previously triggered workflow runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.name }}
+  cancel-in-progress: true
+
+jobs:
+  execute-matrix:
+    name: ${{ matrix.definitions.platform }} (${{ matrix.definitions.swift_version }} - ${{ matrix.definitions.os_version }})
+    runs-on: ${{ matrix.definitions.runner }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(inputs.matrix_string) }}
+    container:
+      image: ${{ contains(matrix.definitions.swift_version, 'nightly') && 'swiftlang/swift' || 'swift' }}:${{ matrix.definitions.swift_version }}-${{ matrix.definitions.os_version }}
+    steps:
+      - name: Swift version
+        run: swift --version
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: true
+
+      - name: Set environment variables
+        run: echo "SWIFT_VERSION=${{ matrix.definitions.swift_version }}" >> $GITHUB_ENV
+
+      - name: Run matrix job (Linux)
+        timeout-minutes: 60
+        run: |
+          if [ -n "${{ secrets.PERSONAL_ACCESS_TOKEN }}" ]; then
+            git config --global --add url."https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/".insteadOf "https://github.com/"
+          fi
+
+          ${{ matrix.definitions.pre_build_command }}
+          ${{ matrix.definitions.build_command }} ${{ matrix.definitions.build_command_options }}

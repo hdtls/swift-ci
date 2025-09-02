@@ -11,10 +11,6 @@ on:
         type: string
         description: "The test matrix definition."
         required: true
-      platform:
-        type: string
-        description: "The platform to run the jobs. e.g. Linux, Windows, macOS"
-        required: true
 
     secrets:
       PERSONAL_ACCESS_TOKEN:
@@ -26,41 +22,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  linux:
+  execute-matrix:
     name: ${{ matrix.definitions.platform }} (${{ matrix.definitions.swift_version }} - ${{ matrix.definitions.os_version }})
-    if: ${{ inputs.platform == 'Linux' }}
-    runs-on: ${{ matrix.definitions.runner }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(inputs.matrix_string) }}
-    container:
-      image: ${{ contains(matrix.definitions.swift_version, 'nightly') && 'swiftlang/swift' || 'swift' }}:${{ matrix.definitions.swift_version }}-${{ matrix.definitions.os_version }}
-    steps:
-      - name: Swift version
-        run: swift --version
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-          submodules: true
-
-      - name: Set environment variables
-        run: echo "SWIFT_VERSION=${{ matrix.definitions.swift_version }}" >> $GITHUB_ENV
-
-      - name: Run matrix job (Linux)
-        timeout-minutes: 60
-        run: |
-          if [ -n "${{ secrets.PERSONAL_ACCESS_TOKEN }}" ]; then
-            git config --global --add url."https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/".insteadOf "https://github.com/"
-          fi
-
-          ${{ matrix.definitions.pre_build_command }}
-          ${{ matrix.definitions.build_command }} ${{ matrix.definitions.build_command_options }}
-
-  windows:
-    name: ${{ matrix.definitions.platform }} (${{ matrix.definitions.swift_version }} - ${{ matrix.definitions.os_version }})
-    if: ${{ inputs.platform == 'Windows' }}
     runs-on: ${{ matrix.definitions.runner }}
     strategy:
       fail-fast: false

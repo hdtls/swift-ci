@@ -1,0 +1,84 @@
+name: Unit tests
+
+on:
+  workflow_call:
+    inputs:
+      windows_pre_build_command:
+        type: string
+        default: ""
+      windows_build_command:
+        type: string
+        default: swift test
+      windows_build_command_options:
+        type: string
+        default: ""
+      windows_6_0_enabled:
+        type: boolean
+        description: "Boolean to enable the Windows 6.0 Swift version matrix job. Defaults to false."
+        default: false
+      windows_6_0_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the Windows 6.0 Swift version matrix job."
+        default: ""
+      windows_6_1_enabled:
+        type: boolean
+        description: "Boolean to enable the Windows 6.1 Swift version matrix job. Defaults to false."
+        default: false
+      windows_6_1_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the Windows 6.1 Swift version matrix job."
+        default: ""
+      windows_nightly_release_enabled:
+        type: boolean
+        description: "Boolean to enable the Windows nightly (release/x) Swift version matrix job. Defaults to false."
+        default: false
+      windows_nightly_release_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the Windows nightly (release/x) Swift version matrix job."
+        default: ""
+      windows_nightly_main_enabled:
+        type: boolean
+        description: "Boolean to enable the Windows nightly (main) Swift version matrix job. Defaults to false."
+        default: false
+      windows_nightly_main_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the Windows nightly (main) Swift version matrix job."
+        default: "-"
+    secrets:
+      PERSONAL_ACCESS_TOKEN:
+        required: false
+
+jobs:
+  unit-tests-matrix:
+    name: Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      tests-matrix: ${{ steps.tests-matrix.outputs.tests-matrix }}
+    steps:
+      - id: tests-matrix
+        env:
+          MATRIX_MACHINE: docker
+
+          MATRIX_WINDOWS_PRE_BUILD_COMMAND: ${{ inputs.windows_pre_build_command }}
+          MATRIX_WINDOWS_BUILD_COMMAND: ${{ inputs.windows_build_command }}
+          MATRIX_WINDOWS_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_build_command_options }}
+          MATRIX_WINDOWS_6_0_ENABLED: ${{ inputs.windows_6_0_enabled }}
+          MATRIX_WINDOWS_6_0_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_6_0_build_command_options }}
+          MATRIX_WINDOWS_6_1_ENABLED: ${{ inputs.windows_6_1_enabled }}
+          MATRIX_WINDOWS_6_1_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_6_1_build_command_options }}
+          MATRIX_WINDOWS_NIGHTLY_RELEASE_ENABLED: ${{ inputs.windows_nightly_release_enabled }}
+          MATRIX_WINDOWS_NIGHTLY_RELEASE_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_nightly_release_build_command_options }}
+          MATRIX_WINDOWS_NIGHTLY_MAIN_ENABLED: ${{ inputs.windows_nightly_main_enabled }}
+          MATRIX_WINDOWS_NIGHTLY_MAIN_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_nightly_main_build_command_options }}
+        run: |
+          echo "tests-matrix=$(curl -H 'Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}' -H 'Accept: application/vnd.github.v3.raw' -L -s https://raw.githubusercontent.com/hdtls/swift-ci/main/.github/workflows/scripts/generate_matrix.sh | bash)" >> "$GITHUB_OUTPUT"
+
+  unit-tests-windows:
+    name: Unix tests (Windows)
+    needs: unit-tests-matrix
+    uses: hdtls/swift-ci/.github/workflows/matrix_windows.yml@main
+    secrets:
+      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    with:
+      name: Unix tests (Windows)
+      matrix_string: "${{ needs.unit-tests-matrix.outputs.tests-matrix }}"
