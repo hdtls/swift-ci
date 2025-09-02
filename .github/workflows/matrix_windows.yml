@@ -56,13 +56,13 @@ jobs:
             }
           }
 
-          Invoke-Program swift --version
-          Invoke-Program swift test --version
-          Invoke-Program cd $Source
-
           if (-not [string]::IsNullOrEmpty("${{ secrets.PERSONAL_ACCESS_TOKEN }}")) {
             Invoke-Program git config --global --add url."https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/".insteadOf "https://github.com/"
           }
+
+          Invoke-Program swift --version
+          Invoke-Program swift test --version
+          Invoke-Program cd $Source
 
           ${{ matrix.definitions.pre_build_command }}
           Invoke-Program ${{ matrix.definitions.build_command }} ${{ matrix.definitions.build_command_options }}

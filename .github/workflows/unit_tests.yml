@@ -109,7 +109,7 @@ on:
 
 jobs:
   unit-tests-linux:
-    name: Unix tests (Linux)
+    name: Unit tests
     uses: hdtls/swift-ci/.github/workflows/unit_tests_linux.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
@@ -131,7 +131,7 @@ jobs:
       linux_nightly_main_build_command_options: ${{ inputs.linux_nightly_main_build_command_options }}
 
   unit-tests-windows:
-    name: Unix tests (Windows)
+    name: Unit tests
     uses: hdtls/swift-ci/.github/workflows/unit_tests_windows.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

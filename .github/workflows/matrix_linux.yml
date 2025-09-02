@@ -31,17 +31,11 @@ jobs:
     container:
       image: ${{ contains(matrix.definitions.swift_version, 'nightly') && 'swiftlang/swift' || 'swift' }}:${{ matrix.definitions.swift_version }}-${{ matrix.definitions.os_version }}
     steps:
-      - name: Swift version
-        run: swift --version
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           persist-credentials: false
           submodules: true
-
-      - name: Set environment variables
-        run: echo "SWIFT_VERSION=${{ matrix.definitions.swift_version }}" >> $GITHUB_ENV
 
       - name: Run matrix job (Linux)
         timeout-minutes: 60
@@ -50,5 +44,7 @@ jobs:
             git config --global --add url."https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/".insteadOf "https://github.com/"
           fi
 
+          swift --version
+          swift test --version
           ${{ matrix.definitions.pre_build_command }}
           ${{ matrix.definitions.build_command }} ${{ matrix.definitions.build_command_options }}
