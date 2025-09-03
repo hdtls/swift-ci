@@ -1,4 +1,4 @@
-name: Matrix
+name: Matrix (Windows)
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: Matrix
+name: Matrix (macOS)
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: Matrix
+name: Matrix (Linux)
 
 on:
   workflow_call:
