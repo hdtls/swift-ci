@@ -36,7 +36,7 @@ jobs:
           submodules: true
 
       - name: Select Xcode
-        run: echo "DEVELOPER_DIR=/Applications/${{ matrix.definitions.os_version }}.app" >> $GITHUB_ENV
+        run: echo "DEVELOPER_DIR=/Applications/${{ matrix.definitions.tools_version }}.app" >> $GITHUB_ENV
 
       - name: Run matrix job (macOS)
         timeout-minutes: 60
@@ -45,7 +45,7 @@ jobs:
             git config --global --add url."https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/".insteadOf "https://github.com/"
           fi
 
-          xcrun swift --version
-          xcrun swift test --version
+          swift --version
+          swift test --version
           ${{ matrix.definitions.pre_build_command }}
           ${{ matrix.definitions.build_command }} ${{ matrix.definitions.build_command_options }}
