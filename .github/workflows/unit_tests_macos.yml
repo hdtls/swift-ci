@@ -90,5 +90,5 @@ jobs:
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
-      name: Unix tests
+      name: Unix tests (macOS)
       matrix_string: "${{ needs.unit-tests-matrix.outputs.tests-matrix }}"

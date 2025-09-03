@@ -80,5 +80,5 @@ jobs:
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
-      name: Unit tests
+      name: Unit tests (Windows)
       matrix_string: "${{ needs.unit-tests-matrix.outputs.tests-matrix }}"
