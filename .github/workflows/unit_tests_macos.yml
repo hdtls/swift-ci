@@ -1,0 +1,94 @@
+name: Unit tests
+
+on:
+  workflow_call:
+    inputs:
+      macos_pre_build_command:
+        type: string
+        default: ""
+      macos_build_command:
+        type: string
+        default: swift test
+      macos_build_command_options:
+        type: string
+        description: "The default arguments passed to swift test in the macOS matrix job. override by versioned build_command_options."
+        default: ""
+      macos_5_9_enabled:
+        type: boolean
+        description: "Boolean to enable the macOS Swift 5.9 (Xcode 15.2) matrix job. Defaults to true."
+        default: false
+      macos_5_9_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the macOS Swift 5.9 (Xcode 15.2) matrix job."
+        default: ""
+      macos_5_10_enabled:
+        type: boolean
+        description: "Boolean to enable the macOS Swift 5.10 (Xcode 15.4) matrix job. Defaults to true."
+        default: false
+      macos_5_10_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the macOS Swift 5.10 (Xcode 15.4) matrix job."
+        default: ""
+      macos_6_0_enabled:
+        type: boolean
+        description: "Boolean to enable the macOS Swift 6.0 (Xcode 16.2) matrix job. Defaults to true."
+        default: false
+      macos_6_0_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the macOS Swift 6.0 (Xcode 16.2) matrix job."
+        default: ""
+      macos_6_1_enabled:
+        type: boolean
+        description: "Boolean to enable the macOS Swift 6.1 (Xcode 16.4) matrix job. Defaults to true."
+        default: false
+      macos_6_1_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the macOS Swift 6.1 (Xcode 16.4) matrix job."
+        default: ""
+      macos_6_2_enabled:
+        type: boolean
+        description: "Boolean to enable the macOS Swift 6.2 (Xcode 26) matrix job. Defaults to true."
+        default: false
+      macos_6_2_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the macOS Swift 6.2 (Xcode 26) matrix job."
+        default: ""
+
+    secrets:
+      PERSONAL_ACCESS_TOKEN:
+        required: false
+
+jobs:
+  unit-tests-matrix:
+    name: Matrix (macOS)
+    runs-on: ubuntu-latest
+    outputs:
+      tests-matrix: ${{ steps.tests-matrix.outputs.tests-matrix }}
+    steps:
+      - id: tests-matrix
+        env:
+          MATRIX_MACOS_PRE_BUILD_COMMAND: ${{ inputs.macos_pre_build_command }}
+          MATRIX_MACOS_BUILD_COMMAND: ${{ inputs.macos_build_command}}
+          MATRIX_MACOS_BUILD_COMMAND_OPTIONS: ${{ inputs.macos_build_command_options }}
+          MATRIX_MACOS_5_9_ENABLED: ${{ inputs.macos_5_9_enabled }}
+          MATRIX_MACOS_5_9_BUILD_COMMAND_OPTIONS: ${{ inputs.macos_5_9_build_command_options }}
+          MATRIX_MACOS_5_10_ENABLED: ${{ inputs.macos_5_10_enabled }}
+          MATRIX_MACOS_5_10_BUILD_COMMAND_OPTIONS: ${{ inputs.macos_5_10_build_command_options }}
+          MATRIX_MACOS_6_0_ENABLED: ${{ inputs.macos_6_0_enabled }}
+          MATRIX_MACOS_6_0_BUILD_COMMAND_OPTIONS: ${{ inputs.macos_6_0_build_command_options }}
+          MATRIX_MACOS_6_1_ENABLED: ${{ inputs.macos_6_1_enabled }}
+          MATRIX_MACOS_6_1_BUILD_COMMAND_OPTIONS: ${{ inputs.macos_6_1_build_command_options }}
+          MATRIX_MACOS_6_2_ENABLED: ${{ inputs.macos_6_2_enabled }}
+          MATRIX_MACOS_6_2_BUILD_COMMAND_OPTIONS: ${{ inputs.macos_6_2_build_command_options }}
+        run: |
+          echo "tests-matrix=$(curl -H 'Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}' -H 'Accept: application/vnd.github.v3.raw' -L -s https://raw.githubusercontent.com/hdtls/swift-ci/main/.github/workflows/scripts/generate_matrix.sh | bash)" >> "$GITHUB_OUTPUT"
+
+  unit-tests-macos:
+    name: Unix tests
+    needs: unit-tests-matrix
+    uses: hdtls/swift-ci/.github/workflows/matrix_macos.yml@main
+    secrets:
+      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    with:
+      name: Unix tests
+      matrix_string: "${{ needs.unit-tests-matrix.outputs.tests-matrix }}"
