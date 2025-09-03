@@ -81,7 +81,7 @@ jobs:
           MATRIX_MACOS_6_2_ENABLED: ${{ inputs.macos_6_2_enabled }}
           MATRIX_MACOS_6_2_BUILD_COMMAND_OPTIONS: ${{ inputs.macos_6_2_build_command_options }}
         run: |
-          echo "tests-matrix=$(curl -H 'Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}' -H 'Accept: application/vnd.github.v3.raw' -L -s https://raw.githubusercontent.com/hdtls/swift-ci/main/.github/workflows/scripts/generate_matrix.sh | bash)" >> "$GITHUB_OUTPUT"
+          echo "tests-matrix=$(curl --retry 3 -H 'Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}' -H 'Accept: application/vnd.github.v3.raw' -L -s --retry 3 https://raw.githubusercontent.com/hdtls/swift-ci/main/.github/workflows/scripts/generate_matrix.sh | bash)" >> "$GITHUB_OUTPUT"
 
   unit-tests-macos:
     name: Unix tests

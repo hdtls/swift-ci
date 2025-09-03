@@ -71,7 +71,7 @@ jobs:
           MATRIX_WINDOWS_NIGHTLY_MAIN_ENABLED: ${{ inputs.windows_nightly_main_enabled }}
           MATRIX_WINDOWS_NIGHTLY_MAIN_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_nightly_main_build_command_options }}
         run: |
-          echo "tests-matrix=$(curl -H 'Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}' -H 'Accept: application/vnd.github.v3.raw' -L -s https://raw.githubusercontent.com/hdtls/swift-ci/main/.github/workflows/scripts/generate_matrix.sh | bash)" >> "$GITHUB_OUTPUT"
+          echo "tests-matrix=$(curl --retry 3 -H 'Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}' -H 'Accept: application/vnd.github.v3.raw' -L -s --retry 3 https://raw.githubusercontent.com/hdtls/swift-ci/main/.github/workflows/scripts/generate_matrix.sh | bash)" >> "$GITHUB_OUTPUT"
 
   unit-tests-windows:
     name: Unit tests
