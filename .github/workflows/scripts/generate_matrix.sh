@@ -31,7 +31,7 @@ matrix_append_definition() {
 
 # Matrix (macOS)
 if [ "$MATRIX_MACOS_5_9_ENABLED" == "true" ]; then
-  matrix_append_definition "macOS" "macos-13" "5.9" "Ventura" "Xcode_15.2" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_5_9_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
+  matrix_append_definition "macOS" "macos-14" "5.9" "Sonoma" "Xcode_15.2" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_5_9_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
 fi
 
 if [ "$MATRIX_MACOS_5_10_ENABLED" == "true" ]; then
@@ -47,7 +47,7 @@ if [ "$MATRIX_MACOS_6_1_ENABLED" == "true" ]; then
 fi
 
 if [ "$MATRIX_MACOS_6_2_ENABLED" == "true" ]; then
-  matrix_append_definition "macOS" "macos-15" "6.2" "Sequoia" "Xcode_26_beta_7_Universal" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_6_2_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
+  matrix_append_definition "macOS" "macos-26" "6.2" "Tahoe" "Xcode_26.0" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_6_2_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
 fi
 
 # Matrix (Linux)
