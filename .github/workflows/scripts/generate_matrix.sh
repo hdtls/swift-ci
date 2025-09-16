@@ -17,15 +17,33 @@
 matrix='{"definitions": []}'
 
 matrix_append_definition() {
+  local platform="$1"
+  local runner="$2"
+  local swift_version="$3"
+  local os_version="$4"
+  local tools_version="$5"
+  local pre_build_command="$6"
+  local command="$7"
+  local command_options="$8"
+
+    # Detect multiple runners: split by comma or space
+  if [[ "$runner" == *","* ]] || [[ "$runner" == *" "* ]]; then
+    # Convert to JSON array
+    runner_json=$(jq -nc --arg runners "$runner" '($runners | split("[ ,]+"; "g"))')
+  else
+    # Single string
+    runner_json=$(jq -nc --arg r "$runner" '$r')
+  fi
+
   matrix=$(echo "$matrix" | jq -c \
-    --arg platform "$1" \
-    --arg runner "$2" \
-    --arg swift_version "$3" \
-    --arg os_version "$4" \
-    --arg tools_version "$5" \
-    --arg pre_build_command "$6" \
-    --arg command "$7"  \
-    --arg command_options "$8" \
+    --arg platform "$platform" \
+    --arg swift_version "$swift_version" \
+    --arg os_version "$os_version" \
+    --arg tools_version "$tools_version" \
+    --arg pre_build_command "$pre_build_command" \
+    --arg command "$command"  \
+    --arg command_options "$command_options" \
+    --argjson runner "$runner_json" \
     '.definitions[.definitions| length] |= . + { "platform": $platform, "runner": $runner, "swift_version": $swift_version, "os_version": $os_version, "tools_version": $tools_version, "pre_build_command": $pre_build_command, "build_command": $command, "build_command_options": $command_options }')
 }
 
