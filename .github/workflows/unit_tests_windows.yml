@@ -57,7 +57,7 @@ on:
         required: false
 
 jobs:
-  unit-tests-matrix:
+  unit-tests-matrix-windows:
     name: Matrix (Windows)
     runs-on: ubuntu-latest
     outputs:
@@ -84,12 +84,12 @@ jobs:
           echo "tests-matrix=$(curl -s --retry 3 https://raw.githubusercontent.com/hdtls/swift-ci/main/.github/workflows/scripts/generate_matrix.sh | bash)" >> "$GITHUB_OUTPUT"
 
   unit-tests-windows:
-    name: Unit tests
-    needs: unit-tests-matrix
-    if: ${{ !contains(needs.unit-tests-matrix.outputs.tests-matrix, '"definitions":[]') }}
+    name: Unit tests (Windows)
+    needs: unit-tests-matrix-windows
+    if: ${{ !contains(needs.unit-tests-matrix-windows.outputs.tests-matrix, '"definitions":[]') }}
     uses: hdtls/swift-ci/.github/workflows/matrix_windows.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
       name: Unit tests (Windows)
-      matrix_string: "${{ needs.unit-tests-matrix.outputs.tests-matrix }}"
+      matrix_string: "${{ needs.unit-tests-matrix-windows.outputs.tests-matrix }}"
