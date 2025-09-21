@@ -85,6 +85,7 @@ jobs:
   unit-tests-macos:
     name: Unix tests
     needs: unit-tests-matrix
+    if: ${{ !contains(needs.unit-tests-matrix.outputs.tests-matrix, '"definitions":[]') }}
     uses: hdtls/swift-ci/.github/workflows/matrix_macos.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
