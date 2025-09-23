@@ -67,11 +67,11 @@ on:
         default: "macos-26"
       macos_6_2_enabled:
         type: boolean
-        description: "Boolean to enable the macOS Swift 6.2 (Xcode 26) matrix job. Defaults to false."
+        description: "Boolean to enable the macOS Swift 6.2 (Xcode 26.0) matrix job. Defaults to false."
         default: false
       macos_6_2_build_command_options:
         type: string
-        description: "The arguments passed to swift test in the macOS Swift 6.2 (Xcode 26) matrix job."
+        description: "The arguments passed to swift test in the macOS Swift 6.2 (Xcode 26.0) matrix job."
         default: ""
 
       linux_pre_build_command:
