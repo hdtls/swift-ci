@@ -25,6 +25,7 @@ jobs:
       macos_6_0_enabled: true
       macos_6_1_enabled: true
       macos_6_2_enabled: true
+      macos_6_2_runs-on: macos-26, macos-15
       macos_build_command_options: "-Xswiftc -warnings-as-errors --explicit-target-dependency-import-check error"
       macos_pre_build_command: |
         mkdir MyPackage
