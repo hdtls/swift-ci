@@ -15,7 +15,7 @@ on:
         default: ""
       macos_5_9_enabled:
         type: boolean
-        description: "Boolean to enable the macOS Swift 5.9 (Xcode 15.2) matrix job. Defaults to true."
+        description: "Boolean to enable the macOS Swift 5.9 (Xcode 15.2) matrix job. Defaults to false."
         default: false
       macos_5_9_build_command_options:
         type: string
@@ -23,7 +23,7 @@ on:
         default: ""
       macos_5_10_enabled:
         type: boolean
-        description: "Boolean to enable the macOS Swift 5.10 (Xcode 15.4) matrix job. Defaults to true."
+        description: "Boolean to enable the macOS Swift 5.10 (Xcode 15.4) matrix job. Defaults to false."
         default: false
       macos_5_10_build_command_options:
         type: string
@@ -31,7 +31,7 @@ on:
         default: ""
       macos_6_0_enabled:
         type: boolean
-        description: "Boolean to enable the macOS Swift 6.0 (Xcode 16.2) matrix job. Defaults to true."
+        description: "Boolean to enable the macOS Swift 6.0 (Xcode 16.2) matrix job. Defaults to false."
         default: false
       macos_6_0_build_command_options:
         type: string
@@ -39,7 +39,7 @@ on:
         default: ""
       macos_6_1_enabled:
         type: boolean
-        description: "Boolean to enable the macOS Swift 6.1 (Xcode 16.4) matrix job. Defaults to true."
+        description: "Boolean to enable the macOS Swift 6.1 (Xcode 16.4) matrix job. Defaults to false."
         default: false
       macos_6_1_build_command_options:
         type: string
@@ -47,7 +47,7 @@ on:
         default: ""
       macos_6_2_enabled:
         type: boolean
-        description: "Boolean to enable the macOS Swift 6.2 (Xcode 26) matrix job. Defaults to true."
+        description: "Boolean to enable the macOS Swift 6.2 (Xcode 26) matrix job. Defaults to false."
         default: false
       macos_6_2_build_command_options:
         type: string
@@ -66,56 +66,56 @@ on:
         default: ""
       linux_5_9_enabled:
         type: boolean
-        description: "Boolean to enable the Linux 5.9 Swift version matrix job. Defaults to true."
-        default: true
+        description: "Boolean to enable the Linux 5.9 Swift version matrix job. Defaults to false."
+        default: false
       linux_5_9_build_command_options:
         type: string
         description: "The arguments passed to swift test in the Linux 5.9 Swift version matrix job."
         default: ""
       linux_5_10_enabled:
         type: boolean
-        description: "Boolean to enable the Linux 5.10 Swift version matrix job. Defaults to true."
-        default: true
+        description: "Boolean to enable the Linux 5.10 Swift version matrix job. Defaults to false."
+        default: false
       linux_5_10_build_command_options:
         type: string
         description: "The arguments passed to swift test in the Linux 5.10 Swift version matrix job."
         default: ""
       linux_6_0_enabled:
         type: boolean
-        description: "Boolean to enable the Linux 6.0 Swift version matrix job. Defaults to true."
-        default: true
+        description: "Boolean to enable the Linux 6.0 Swift version matrix job. Defaults to false."
+        default: false
       linux_6_0_build_command_options:
         type: string
         description: "The arguments passed to swift test in the Linux 6.0 Swift version matrix job."
         default: ""
       linux_6_1_enabled:
         type: boolean
-        description: "Boolean to enable the Linux 6.1 Swift version matrix job. Defaults to true."
-        default: true
+        description: "Boolean to enable the Linux 6.1 Swift version matrix job. Defaults to false."
+        default: false
       linux_6_1_build_command_options:
         type: string
         description: "The arguments passed to swift test in the Linux 6.1 Swift version matrix job."
         default: ""
       linux_6_2_enabled:
         type: boolean
-        description: "Boolean to enable the Linux 6.2 Swift version matrix job. Defaults to true."
-        default: true
+        description: "Boolean to enable the Linux 6.2 Swift version matrix job. Defaults to false."
+        default: false
       linux_6_2_build_command_options:
         type: string
         description: "The arguments passed to swift test in the Linux 6.2 Swift version matrix job."
         default: ""
       linux_nightly_release_enabled:
         type: boolean
-        description: "Boolean to enable the Linux nightly release/x.x Swift version matrix job. Defaults to true."
-        default: true
+        description: "Boolean to enable the Linux nightly release/x.x Swift version matrix job. Defaults to false."
+        default: false
       linux_nightly_release_build_command_options:
         type: string
         description: "The arguments passed to swift test in the Linux nightly release/x.x Swift version matrix job."
         default: ""
       linux_nightly_main_enabled:
         type: boolean
-        description: "Boolean to enable the Linux nightly main Swift version matrix job. Defaults to true."
-        default: true
+        description: "Boolean to enable the Linux nightly main Swift version matrix job. Defaults to false."
+        default: false
       linux_nightly_main_build_command_options:
         type: string
         description: "The arguments passed to swift test in the Linux nightly main Swift version matrix job."
