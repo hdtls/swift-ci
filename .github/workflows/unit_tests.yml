@@ -217,7 +217,7 @@ jobs:
       macos_6_1_enabled: ${{ inputs.macos_6_1_enabled }}
       macos_6_1_runs-on: ${{ inputs.macos_6_1_runs-on }}
       macos_6_2_build_command_options: ${{ inputs.macos_6_1_build_command_options }}
-      macos_6_2_enabled: ${{ inputs.macos_6_1_enabled }}
+      macos_6_2_enabled: ${{ inputs.macos_6_2_enabled }}
       macos_6_2_runs-on: ${{ inputs.macos_6_2_runs-on }}
 
   unit-tests-linux:
