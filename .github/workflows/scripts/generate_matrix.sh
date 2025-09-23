@@ -43,25 +43,53 @@ matrix_append_definition() {
   done
 }
 
+matrix_macos_append_definition() {
+  IFS=',' read -ra items <<< "$2"
+  for item in "${items[@]}"; do
+    local runner os_version
+    runner="$(echo "$item" | xargs)"
+
+    case "$runner" in
+      "macos-14"*)
+        os_version="Sonoma"
+        ;;
+      "macos-15"*)
+        os_version="Sequoia"
+        ;;
+      "macos-26"*)
+        os_version="Tahoe"
+        ;;
+      "macos-latest"*)
+        os_version="Sequoia"
+        ;;
+      *)
+        os_version="$runner"
+        ;;
+    esac
+
+    matrix_append_definition "macOS" "$runner" "$3" "$os_version" "$5" "$6" "$7" "$8"
+  done
+}
+
 # Matrix (macOS)
 if [ "$MATRIX_MACOS_5_9_ENABLED" == "true" ]; then
-  matrix_append_definition "macOS" "$MATRIX_MACOS_5_9_RUNS_ON" "5.9" "Sonoma" "Xcode_15.2" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_5_9_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
+  matrix_macos_append_definition "macOS" "$MATRIX_MACOS_5_9_RUNS_ON" "5.9" "Sonoma" "Xcode_15.2" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_5_9_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
 fi
 
 if [ "$MATRIX_MACOS_5_10_ENABLED" == "true" ]; then
-  matrix_append_definition "macOS" "$MATRIX_MACOS_5_10_RUNS_ON" "5.10" "Sonoma" "Xcode_15.4" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_5_10_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
+  matrix_macos_append_definition "macOS" "$MATRIX_MACOS_5_10_RUNS_ON" "5.10" "Sonoma" "Xcode_15.4" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_5_10_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
 fi
 
 if [ "$MATRIX_MACOS_6_0_ENABLED" == "true" ]; then
-  matrix_append_definition "macOS" "$MATRIX_MACOS_6_0_RUNS_ON" "6.0" "Sequoia" "Xcode_16.2" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_6_0_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
+  matrix_macos_append_definition "macOS" "$MATRIX_MACOS_6_0_RUNS_ON" "6.0" "Sequoia" "Xcode_16.2" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_6_0_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
 fi
 
 if [ "$MATRIX_MACOS_6_1_ENABLED" == "true" ]; then
-  matrix_append_definition "macOS" "$MATRIX_MACOS_6_1_RUNS_ON" "6.1" "Sequoia" "Xcode_16.4" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_6_1_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
+  matrix_macos_append_definition "macOS" "$MATRIX_MACOS_6_1_RUNS_ON" "6.1" "Sequoia" "Xcode_16.4" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_6_1_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
 fi
 
 if [ "$MATRIX_MACOS_6_2_ENABLED" == "true" ]; then
-  matrix_append_definition "macOS" "$MATRIX_MACOS_6_2_RUNS_ON" "6.2" "Tahoe" "Xcode_26.0" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_6_2_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
+  matrix_macos_append_definition "macOS" "$MATRIX_MACOS_6_2_RUNS_ON" "6.2" "Tahoe" "Xcode_26.0" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_6_2_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
 fi
 
 # Matrix (Linux)
