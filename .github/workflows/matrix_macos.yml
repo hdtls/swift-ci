@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   execute-matrix:
-    name: ${{ matrix.definitions.platform }} (${{ matrix.definitions.swift_version }} - ${{ matrix.definitions.os_version }} - ${{ matrix.definitions.tools_version }})
+    name: ${{ matrix.definitions.platform }} (${{ matrix.definitions.swift_version }} - ${{ matrix.definitions.tools_version }})
     runs-on: ${{ matrix.definitions.runner }}
     strategy:
       fail-fast: false
