@@ -25,7 +25,8 @@ jobs:
       macos_6_0_enabled: true
       macos_6_1_enabled: true
       macos_6_2_enabled: true
-      macos_6_2_runs-on: macos-26, macos-15
+      macos_6_3_enabled: true
+      macos_6_3_runs-on: macos-26, macos-15
       macos_build_command_options: "-Xswiftc -warnings-as-errors --explicit-target-dependency-import-check error"
       macos_pre_build_command: |
         mkdir MyPackage
@@ -38,6 +39,7 @@ jobs:
       linux_6_0_enabled: true
       linux_6_1_enabled: true
       linux_6_2_enabled: true
+      linux_6_3_enabled: true
       linux_nightly_release_enabled: true
       linux_nightly_main_enabled: true
       linux_build_command_options: "-Xswiftc -warnings-as-errors --explicit-target-dependency-import-check error"
@@ -51,6 +53,7 @@ jobs:
       windows_6_0_enabled: true
       windows_6_1_enabled: true
       windows_6_2_enabled: true
+      windows_6_3_enabled: true
       windows_nightly_release_enabled: true
       windows_nightly_main_enabled: true
       windows_build_command_options: "-Xswiftc -warnings-as-errors --explicit-target-dependency-import-check error"

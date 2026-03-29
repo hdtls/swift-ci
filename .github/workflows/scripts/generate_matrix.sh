@@ -89,7 +89,11 @@ if [ "$MATRIX_MACOS_6_1_ENABLED" == "true" ]; then
 fi
 
 if [ "$MATRIX_MACOS_6_2_ENABLED" == "true" ]; then
-  matrix_macos_append_definition "macOS" "$MATRIX_MACOS_6_2_RUNS_ON" "6.2" "Tahoe" "Xcode_26.2" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_6_2_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
+  matrix_macos_append_definition "macOS" "$MATRIX_MACOS_6_2_RUNS_ON" "6.2" "Tahoe" "Xcode_26.3" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_6_2_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
+fi
+
+if [ "$MATRIX_MACOS_6_3_ENABLED" == "true" ]; then
+  matrix_macos_append_definition "macOS" "$MATRIX_MACOS_6_3_RUNS_ON" "6.3" "Tahoe" "Xcode_26.4" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_6_3_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
 fi
 
 # Matrix (Linux)
@@ -111,6 +115,10 @@ fi
 
 if [ "$MATRIX_LINUX_6_2_ENABLED" == "true" ]; then
   matrix_append_definition "Linux" "ubuntu-latest" "6.2" "noble" "" "$MATRIX_LINUX_PRE_BUILD_COMMAND" "$MATRIX_LINUX_BUILD_COMMAND" "${MATRIX_LINUX_6_2_BUILD_COMMAND_OPTIONS:-$MATRIX_LINUX_BUILD_COMMAND_OPTIONS}"
+fi
+
+if [ "$MATRIX_LINUX_6_3_ENABLED" == "true" ]; then
+  matrix_append_definition "Linux" "ubuntu-latest" "6.3" "noble" "" "$MATRIX_LINUX_PRE_BUILD_COMMAND" "$MATRIX_LINUX_BUILD_COMMAND" "${MATRIX_LINUX_6_3_BUILD_COMMAND_OPTIONS:-$MATRIX_LINUX_BUILD_COMMAND_OPTIONS}"
 fi
 
 if [ "$MATRIX_LINUX_NIGHTLY_RELEASE_ENABLED" == "true" ]; then
@@ -152,6 +160,17 @@ if [ "$MATRIX_WINDOWS_6_2_ENABLED" == "true" ]; then
   else
     matrix_append_definition "Windows" "windows-2022" "6.2" "windows-2022" "$MATRIX_WINDOWS_PRE_BUILD_COMMAND" "" "$MATRIX_WINDOWS_BUILD_COMMAND" "${MATRIX_WINDOWS_6_2_BUILD_COMMAND_OPTIONS:-$MATRIX_WINDOWS_BUILD_COMMAND_OPTIONS}"
     matrix_append_definition "Windows windowsservercore" "windows-2022" "6.2" "windowsservercore-ltsc2022" "" "$MATRIX_WINDOWS_PRE_BUILD_COMMAND" "$MATRIX_WINDOWS_BUILD_COMMAND" "${MATRIX_WINDOWS_6_2_BUILD_COMMAND_OPTIONS:-$MATRIX_WINDOWS_BUILD_COMMAND_OPTIONS}"
+  fi
+fi
+
+if [ "$MATRIX_WINDOWS_6_3_ENABLED" == "true" ]; then
+  if [ "$MATRIX_MACHINE" == "host" ]; then
+    matrix_append_definition "Windows" "windows-2022" "6.3" "windows-2022" "" "$MATRIX_WINDOWS_PRE_BUILD_COMMAND" "$MATRIX_WINDOWS_BUILD_COMMAND" "${MATRIX_WINDOWS_6_3_BUILD_COMMAND_OPTIONS:-$MATRIX_WINDOWS_BUILD_COMMAND_OPTIONS}"
+  elif [ "$MATRIX_MACHINE" == "docker" ]; then
+    matrix_append_definition "Windows windowsservercore" "windows-2022" "6.3" "windowsservercore-ltsc2022" "" "$MATRIX_WINDOWS_PRE_BUILD_COMMAND" "$MATRIX_WINDOWS_BUILD_COMMAND" "${MATRIX_WINDOWS_6_3_BUILD_COMMAND_OPTIONS:-$MATRIX_WINDOWS_BUILD_COMMAND_OPTIONS}"
+  else
+    matrix_append_definition "Windows" "windows-2022" "6.3" "windows-2022" "$MATRIX_WINDOWS_PRE_BUILD_COMMAND" "" "$MATRIX_WINDOWS_BUILD_COMMAND" "${MATRIX_WINDOWS_6_3_BUILD_COMMAND_OPTIONS:-$MATRIX_WINDOWS_BUILD_COMMAND_OPTIONS}"
+    matrix_append_definition "Windows windowsservercore" "windows-2022" "6.3" "windowsservercore-ltsc2022" "" "$MATRIX_WINDOWS_PRE_BUILD_COMMAND" "$MATRIX_WINDOWS_BUILD_COMMAND" "${MATRIX_WINDOWS_6_3_BUILD_COMMAND_OPTIONS:-$MATRIX_WINDOWS_BUILD_COMMAND_OPTIONS}"
   fi
 fi
 

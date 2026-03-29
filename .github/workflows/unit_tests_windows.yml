@@ -36,6 +36,14 @@ on:
         type: string
         description: "The arguments passed to swift test in the Windows 6.2 Swift version matrix job."
         default: ""
+      windows_6_3_enabled:
+        type: boolean
+        description: "Boolean to enable the Windows 6.3 Swift version matrix job. Defaults to false."
+        default: false
+      windows_6_3_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the Windows 6.3 Swift version matrix job."
+        default: ""
       windows_nightly_release_enabled:
         type: boolean
         description: "Boolean to enable the Windows nightly (release/x) Swift version matrix job. Defaults to false."
@@ -76,6 +84,8 @@ jobs:
           MATRIX_WINDOWS_6_1_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_6_1_build_command_options }}
           MATRIX_WINDOWS_6_2_ENABLED: ${{ inputs.windows_6_2_enabled }}
           MATRIX_WINDOWS_6_2_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_6_2_build_command_options }}
+          MATRIX_WINDOWS_6_3_ENABLED: ${{ inputs.windows_6_3_enabled }}
+          MATRIX_WINDOWS_6_3_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_6_3_build_command_options }}
           MATRIX_WINDOWS_NIGHTLY_RELEASE_ENABLED: ${{ inputs.windows_nightly_release_enabled }}
           MATRIX_WINDOWS_NIGHTLY_RELEASE_BUILD_COMMAND_OPTIONS: ${{ inputs.windows_nightly_release_build_command_options }}
           MATRIX_WINDOWS_NIGHTLY_MAIN_ENABLED: ${{ inputs.windows_nightly_main_enabled }}
