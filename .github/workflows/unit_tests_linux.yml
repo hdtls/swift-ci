@@ -3,6 +3,9 @@ name: Unit tests (Linux)
 on:
   workflow_call:
     inputs:
+      linux_runs-on:
+        type: string
+        default: "ubuntu-24.04-arm"
       linux_pre_build_command:
         type: string
         default: ""
@@ -90,6 +93,7 @@ jobs:
     steps:
       - id: tests-matrix
         env:
+          MATRIX_LINUX_RUNS_ON: ${{ inputs.linux_runs-on }}
           MATRIX_LINUX_PRE_BUILD_COMMAND: ${{ inputs.linux_pre_build_command }}
           MATRIX_LINUX_BUILD_COMMAND: ${{ inputs.linux_build_command}}
           MATRIX_LINUX_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_build_command_options }}
