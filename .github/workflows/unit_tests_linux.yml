@@ -120,7 +120,7 @@ jobs:
     name: Unit tests (Linux)
     needs: unit-tests-matrix-linux
     if: ${{ !contains(needs.unit-tests-matrix-linux.outputs.tests-matrix, '"definitions":[]') }}
-    uses: ./.github/workflows/matrix_linux.yml
+    uses: hdtls/swift-ci/.github/workflows/matrix_linux.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:

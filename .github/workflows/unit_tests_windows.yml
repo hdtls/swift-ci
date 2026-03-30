@@ -97,7 +97,7 @@ jobs:
     name: Unit tests (Windows)
     needs: unit-tests-matrix-windows
     if: ${{ !contains(needs.unit-tests-matrix-windows.outputs.tests-matrix, '"definitions":[]') }}
-    uses: ./.github/workflows/matrix_windows.yml
+    uses: hdtls/swift-ci/.github/workflows/matrix_windows.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:

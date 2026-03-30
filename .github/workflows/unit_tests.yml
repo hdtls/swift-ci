@@ -228,7 +228,7 @@ on:
 jobs:
   unit-tests-macos:
     name: Unit tests
-    uses: ./.github/workflows/unit_tests_macos.yml
+    uses: hdtls/swift-ci/.github/workflows/unit_tests_macos.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
@@ -256,7 +256,7 @@ jobs:
 
   unit-tests-linux:
     name: Unit tests
-    uses: ./.github/workflows/unit_tests_linux.yml
+    uses: hdtls/swift-ci/.github/workflows/unit_tests_linux.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
@@ -283,7 +283,7 @@ jobs:
 
   unit-tests-windows:
     name: Unit tests
-    uses: ./.github/workflows/unit_tests_windows.yml
+    uses: hdtls/swift-ci/.github/workflows/unit_tests_windows.yml@main
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
