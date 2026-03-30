@@ -151,13 +151,11 @@ jobs:
           if [ -n "${{ secrets.PERSONAL_ACCESS_TOKEN }}" ]; then
             git config --global --add url.https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/.insteadOf https://github.com/
           fi
-      - name: Pre-build
-        if: ${{ inputs.linux_pre_build_command }}
-        run: ${{ inputs.linux_pre_build_command }}
       - name: Run documentation check
         env:
           ADDITIONAL_DOCC_ARGUMENTS: ${{ inputs.docs_check_additional_arguments }}
         run: |
+          ${{ inputs.linux_pre_build_command }}
           which curl yq || (apt -q update && apt -yq install curl yq)
           curl -s --retry 3 https://raw.githubusercontent.com/swiftlang/github-workflows/refs/heads/main/.github/workflows/scripts/check-docs.sh | bash
 
