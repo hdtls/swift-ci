@@ -7,7 +7,7 @@ on:
 jobs:
   soundness:
     name: Soundness
-    uses: hdtls/swift-ci/.github/workflows/soundness.yml@main
+    uses: ./.github/workflows/soundness.yml
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
@@ -16,7 +16,7 @@ jobs:
 
   unit-tests:
     name: Unit tests
-    uses: hdtls/swift-ci/.github/workflows/unit_tests.yml@main
+    uses: ./.github/workflows/unit_tests.yml
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     with:
