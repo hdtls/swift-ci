@@ -63,10 +63,6 @@ on:
         type: boolean
         description: "Boolean to enable the shell check job. Defaults to true."
         default: true
-      shell_check_container_image:
-        type: string
-        description: "Container image for the shell check job. Defaults to latest Swift Ubuntu image."
-        default: "swift:6.3-noble"
       yamllint_check_enabled:
         type: boolean
         description: "Boolean to enable the YAML lint check job. Defaults to true."
@@ -240,6 +236,8 @@ jobs:
       image: ${{ inputs.shell_check_container_image }}
     timeout-minutes: 5
     steps:
+      - name: Install git
+        run: which git || (apt -q update && apt -yq install git)
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
