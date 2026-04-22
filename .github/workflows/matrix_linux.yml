@@ -44,6 +44,7 @@ jobs:
             git config --global --add url."https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/".insteadOf "https://github.com/"
           fi
 
+          clang --version
           swift --version
           swift test --version
           ${{ matrix.definitions.pre_build_command }}
