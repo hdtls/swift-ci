@@ -8,7 +8,7 @@ on:
         default: ""
       macos_build_command:
         type: string
-        default: swift test
+        default: xcrun swift test
       macos_build_command_options:
         type: string
         description: "The default arguments passed to swift test in the macOS matrix job. override by versioned build_command_options."
@@ -79,11 +79,11 @@ on:
         default: "macos-26"
       macos_6_3_enabled:
         type: boolean
-        description: "Boolean to enable the macOS Swift 6.3 (Xcode 26.4) matrix job. Defaults to false."
+        description: "Boolean to enable the macOS Swift 6.3 (Xcode 26.5) matrix job. Defaults to false."
         default: false
       macos_6_3_build_command_options:
         type: string
-        description: "The arguments passed to swift test in the macOS Swift 6.3 (Xcode 26.4) matrix job."
+        description: "The arguments passed to swift test in the macOS Swift 6.3 (Xcode 26.5) matrix job."
         default: ""
     secrets:
       PERSONAL_ACCESS_TOKEN:
