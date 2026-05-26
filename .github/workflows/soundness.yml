@@ -91,7 +91,7 @@ jobs:
   api-breakage-check:
     name: API breakage check
     if: ${{ inputs.api_breakage_check_enabled }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     container:
       image: ${{ inputs.api_breakage_check_container_image }}
     timeout-minutes: 40
@@ -136,7 +136,7 @@ jobs:
   docs-check:
     name: Documentation check
     if: ${{ inputs.docs_check_enabled }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     container:
       image: ${{ inputs.docs_check_container_image }}
     timeout-minutes: 40
@@ -162,7 +162,7 @@ jobs:
   unacceptable-language-check:
     name: Unacceptable language check
     if: ${{ inputs.unacceptable_language_check_enabled }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 1
     steps:
       - name: Checkout repository
@@ -178,7 +178,7 @@ jobs:
   license-header-check:
     name: License headers check
     if: ${{ inputs.license_header_check_enabled }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 1
     steps:
       - name: Checkout repository
@@ -194,7 +194,7 @@ jobs:
   broken-symlink-check:
     name: Broken symlinks check
     if: ${{ inputs.broken_symlink_check_enabled }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 1
     steps:
       - name: Checkout repository
@@ -208,7 +208,7 @@ jobs:
   format-check:
     name: Format check
     if: ${{ inputs.format_check_enabled }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     container:
       image: ${{ inputs.format_check_container_image }}
     timeout-minutes: 20
@@ -229,7 +229,7 @@ jobs:
   shell-check:
     name: Shell check
     if: ${{ inputs.shell_check_enabled }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     container:
       image: ${{ inputs.shell_check_container_image }}
     timeout-minutes: 5
@@ -252,7 +252,7 @@ jobs:
   yaml-lint-check:
     name: YAML lint check
     if: ${{ inputs.yamllint_check_enabled }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 5
     steps:
       - name: Checkout repository
@@ -273,7 +273,7 @@ jobs:
   python-lint-check:
     name: Python lint check
     if: ${{ inputs.python_lint_check_enabled }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 5
     steps:
       - name: Checkout repository

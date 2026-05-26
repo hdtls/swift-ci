@@ -67,7 +67,7 @@ on:
 jobs:
   unit-tests-matrix-windows:
     name: Matrix (Windows)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     outputs:
       tests-matrix: ${{ steps.tests-matrix.outputs.tests-matrix }}
     steps:
