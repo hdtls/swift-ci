@@ -59,8 +59,11 @@ matrix_macos_append_definition() {
       "macos-26"*)
         os_version="Tahoe"
         ;;
+      "xcode-27"*)
+        os_version="Golden Gate"
+        ;;
       "macos-latest"*)
-        os_version="Sequoia"
+        os_version="Tahoe"
         ;;
       *)
         os_version="$runner"
@@ -93,7 +96,7 @@ if [ "$MATRIX_MACOS_6_2_ENABLED" == "true" ]; then
 fi
 
 if [ "$MATRIX_MACOS_6_3_ENABLED" == "true" ]; then
-  matrix_macos_append_definition "macOS" "$MATRIX_MACOS_6_3_RUNS_ON" "6.3" "Tahoe" "Xcode_26.5" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_6_3_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
+  matrix_macos_append_definition "macOS" "$MATRIX_MACOS_6_3_RUNS_ON" "6.3" "Tahoe" "Xcode_26.6" "$MATRIX_MACOS_PRE_BUILD_COMMAND" "$MATRIX_MACOS_BUILD_COMMAND" "${MATRIX_MACOS_6_3_BUILD_COMMAND_OPTIONS:-$MATRIX_MACOS_BUILD_COMMAND_OPTIONS}"
 fi
 
 if [ "$MATRIX_MACOS_6_4_ENABLED" == "true" ]; then

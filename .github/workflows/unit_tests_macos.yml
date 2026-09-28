@@ -79,11 +79,11 @@ on:
         default: "macos-26"
       macos_6_3_enabled:
         type: boolean
-        description: "Boolean to enable the macOS Swift 6.3 (Xcode 26.5) matrix job. Defaults to false."
+        description: "Boolean to enable the macOS Swift 6.3 (Xcode 26) matrix job. Defaults to false."
         default: false
       macos_6_3_build_command_options:
         type: string
-        description: "The arguments passed to swift test in the macOS Swift 6.3 (Xcode 26.5) matrix job."
+        description: "The arguments passed to swift test in the macOS Swift 6.3 (Xcode 26) matrix job."
         default: ""
       macos_6_4_runs-on:
         type: string
