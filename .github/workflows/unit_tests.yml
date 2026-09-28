@@ -83,7 +83,19 @@ on:
         default: false
       macos_6_3_build_command_options:
         type: string
-        description: "The arguments passed to swift test in the macOS Swift 6.3 (Xcode 26.4) matrix job."
+        description: "The arguments passed to swift test in the macOS Swift 6.4 (Xcode 26.4) matrix job."
+        default: ""
+      macos_6_4_runs-on:
+        type: string
+        description: "The runner for the matrix job using Swift 6.4, defaults to macos-27. Use commas to define multiple runners."
+        default: "xcode-27"
+      macos_6_4_enabled:
+        type: boolean
+        description: "Boolean to enable the macOS Swift 6.4 (Xcode 27) matrix job. Defaults to false."
+        default: false
+      macos_6_4_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the macOS Swift 6.4 (Xcode 27) matrix job."
         default: ""
 
       linux_runs-on:
@@ -147,6 +159,14 @@ on:
         type: string
         description: "The arguments passed to swift test in the Linux 6.3 Swift version matrix job."
         default: ""
+      linux_6_4_enabled:
+        type: boolean
+        description: "Boolean to enable the Linux 6.4 Swift version matrix job. Defaults to false."
+        default: false
+      linux_6_4_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the Linux 6.4 Swift version matrix job."
+        default: ""
       linux_nightly_release_enabled:
         type: boolean
         description: "Boolean to enable the Linux nightly release/x.x Swift version matrix job. Defaults to false."
@@ -205,6 +225,14 @@ on:
         type: string
         description: "The arguments passed to swift test in the Windows 6.3 Swift version matrix job."
         default: ""
+      windows_6_4_enabled:
+        type: boolean
+        description: "Boolean to enable the Windows 6.4 Swift version matrix job. Defaults to false."
+        default: false
+      windows_6_4_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the Windows 6.4 Swift version matrix job."
+        default: ""
       windows_nightly_release_enabled:
         type: boolean
         description: "Boolean to enable the Windows nightly (release/x) Swift version matrix job. Defaults to false."
@@ -253,6 +281,9 @@ jobs:
       macos_6_3_build_command_options: ${{ inputs.macos_6_3_build_command_options }}
       macos_6_3_enabled: ${{ inputs.macos_6_3_enabled }}
       macos_6_3_runs-on: ${{ inputs.macos_6_3_runs-on }}
+      macos_6_4_build_command_options: ${{ inputs.macos_6_4_build_command_options }}
+      macos_6_4_enabled: ${{ inputs.macos_6_4_enabled }}
+      macos_6_4_runs-on: ${{ inputs.macos_6_4_runs-on }}
 
   unit-tests-linux:
     name: Unit tests
@@ -276,6 +307,8 @@ jobs:
       linux_6_2_build_command_options: ${{ inputs.linux_6_2_build_command_options }}
       linux_6_3_enabled: ${{ inputs.linux_6_3_enabled }}
       linux_6_3_build_command_options: ${{ inputs.linux_6_3_build_command_options }}
+      linux_6_4_enabled: ${{ inputs.linux_6_4_enabled }}
+      linux_6_4_build_command_options: ${{ inputs.linux_6_4_build_command_options }}
       linux_nightly_release_enabled: ${{ inputs.linux_nightly_release_enabled }}
       linux_nightly_release_build_command_options: ${{ inputs.linux_nightly_release_build_command_options }}
       linux_nightly_main_enabled: ${{ inputs.linux_nightly_main_enabled }}
@@ -298,6 +331,8 @@ jobs:
       windows_6_2_build_command_options: ${{ inputs.windows_6_2_build_command_options }}
       windows_6_3_enabled: ${{ inputs.windows_6_3_enabled }}
       windows_6_3_build_command_options: ${{ inputs.windows_6_3_build_command_options }}
+      windows_6_4_enabled: ${{ inputs.windows_6_4_enabled }}
+      windows_6_4_build_command_options: ${{ inputs.windows_6_4_build_command_options }}
       windows_nightly_release_enabled: ${{ inputs.windows_nightly_release_enabled }}
       windows_nightly_release_build_command_options: ${{ inputs.windows_nightly_release_build_command_options }}
       windows_nightly_main_enabled: ${{ inputs.windows_nightly_main_enabled }}

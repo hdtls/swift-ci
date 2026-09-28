@@ -64,6 +64,14 @@ on:
         type: string
         description: "The arguments passed to swift test in the Linux 6.3 Swift version matrix job."
         default: ""
+      linux_6_4_enabled:
+        type: boolean
+        description: "Boolean to enable the Linux 6.4 Swift version matrix job. Defaults to false."
+        default: false
+      linux_6_4_build_command_options:
+        type: string
+        description: "The arguments passed to swift test in the Linux 6.4 Swift version matrix job."
+        default: ""
       linux_nightly_release_enabled:
         type: boolean
         description: "Boolean to enable the Linux nightly release/x.x Swift version matrix job. Defaults to false."
@@ -109,6 +117,8 @@ jobs:
           MATRIX_LINUX_6_2_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_6_2_build_command_options }}
           MATRIX_LINUX_6_3_ENABLED: ${{ inputs.linux_6_3_enabled }}
           MATRIX_LINUX_6_3_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_6_3_build_command_options }}
+          MATRIX_LINUX_6_4_ENABLED: ${{ inputs.linux_6_4_enabled }}
+          MATRIX_LINUX_6_4_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_6_4_build_command_options }}
           MATRIX_LINUX_NIGHTLY_RELEASE_ENABLED: ${{ inputs.linux_nightly_release_enabled }}
           MATRIX_LINUX_NIGHTLY_RELEASE_BUILD_COMMAND_OPTIONS: ${{ inputs.linux_nightly_release_build_command_options }}
           MATRIX_LINUX_NIGHTLY_MAIN_ENABLED: ${{ inputs.linux_nightly_main_enabled }}
