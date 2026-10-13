@@ -5,7 +5,7 @@ on:
     inputs:
       linux_runs-on:
         type: string
-        default: "ubuntu-24.04-arm"
+        default: "ubuntu-26.04-arm"
       linux_pre_build_command:
         type: string
         default: ""
@@ -95,7 +95,7 @@ on:
 jobs:
   unit-tests-matrix-linux:
     name: Matrix (Linux)
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-26.04-arm
     outputs:
       tests-matrix: ${{ steps.tests-matrix.outputs.tests-matrix }}
     steps:

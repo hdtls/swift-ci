@@ -100,7 +100,7 @@ on:
 
       linux_runs-on:
         type: string
-        default: "ubuntu-24.04-arm"
+        default: "ubuntu-26.04-arm"
       linux_pre_build_command:
         type: string
         default: ""

@@ -104,7 +104,7 @@ on:
 jobs:
   unit-tests-matrix-macos:
     name: Matrix (macOS)
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-26.04-arm
     outputs:
       tests-matrix: ${{ steps.tests-matrix.outputs.tests-matrix }}
     steps:
